@@ -1,0 +1,40 @@
+[package]
+name = "rustapp"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+env_logger = { version = "0.9", default-features = false }
+gotham = "0.6.0"
+gotham_derive = "0.6.0"
+http = "0.2"
+http_req = { version = "0.7.2", default-features = false, features = ["rust-tls"] }
+hyper = "0.14"
+itron = { version = "0.1.7", features = ["unstable", "nightly", "solid_fmp3", "dcre"] }
+libc = "0.2"
+image = { version = "0.23.14", default-features = false, features = ["jpeg"] }
+log = "0.4"
+mime = "0.3.16"
+packed_simd = { version = "0.3.7", package = "packed_simd_2", features = ["into_bits"] }
+quickcheck = "1.0.3"
+rayon = "1.5.1"
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
+
+# Replace some dependencies with forks with SOLID support
+[patch.crates-io]
+chrono = { git = "https://github.com/solid-rs/chrono", branch = "solid-rs/0.4.x" }
+hyper = { git = "https://github.com/solid-rs/hyper", branch = "solid-rs/0.14.x" }
+mio = { git = "https://github.com/solid-rs/mio", branch = "solid-rs/0.7.x" }
+ring = { git = "https://github.com/solid-rs/ring.git", branch = "solid-rs/0.16.x" }
+socket2 = { git = "https://github.com/solid-rs/socket2", branch = "solid-rs/0.4.x" }
+time1 = { package = "time", git = "https://github.com/solid-rs/time", branch = "solid-rs/0.1.x" }
+tokio = { git = "https://github.com/solid-rs/tokio", branch = "solid-rs/1.x" }
+
+# Enable optimization for all dependencies regardless of build configuration
+[profile.dev.package."*"]
+opt-level = 1

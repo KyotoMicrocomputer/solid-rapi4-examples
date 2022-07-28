@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# PARTNER-IDE 1
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9CB6BABF-FFDD-4757-BAF4-5C11230D6845}") = "rust-server-gotham", "rust-server-gotham\rust-server-gotham.ptproj", "{24CD7359-0893-47DB-B864-D0D963E076C8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8F175A45-1139-407E-8245-A3FC3573817D} = {8F175A45-1139-407E-8245-A3FC3573817D}
+	EndProjectSection
+EndProject
+Project("{382EF985-E73F-4446-9C00-02051587D32D}") = "rustapp", "rustapp\rustapp.ptrsproj", "{8F175A45-1139-407E-8245-A3FC3573817D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|KMC_SOLID_RPI4 = Debug|KMC_SOLID_RPI4
+		Release|KMC_SOLID_RPI4 = Release|KMC_SOLID_RPI4
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{24CD7359-0893-47DB-B864-D0D963E076C8}.Debug|KMC_SOLID_RPI4.ActiveCfg = Debug|KMC_SOLID_RPI4
+		{24CD7359-0893-47DB-B864-D0D963E076C8}.Debug|KMC_SOLID_RPI4.Build.0 = Debug|KMC_SOLID_RPI4
+		{24CD7359-0893-47DB-B864-D0D963E076C8}.Release|KMC_SOLID_RPI4.ActiveCfg = Release|KMC_SOLID_RPI4
+		{24CD7359-0893-47DB-B864-D0D963E076C8}.Release|KMC_SOLID_RPI4.Build.0 = Release|KMC_SOLID_RPI4
+		{8F175A45-1139-407E-8245-A3FC3573817D}.Debug|KMC_SOLID_RPI4.ActiveCfg = Debug|KMC_SOLID_RPI4
+		{8F175A45-1139-407E-8245-A3FC3573817D}.Debug|KMC_SOLID_RPI4.Build.0 = Debug|KMC_SOLID_RPI4
+		{8F175A45-1139-407E-8245-A3FC3573817D}.Release|KMC_SOLID_RPI4.ActiveCfg = Release|KMC_SOLID_RPI4
+		{8F175A45-1139-407E-8245-A3FC3573817D}.Release|KMC_SOLID_RPI4.Build.0 = Release|KMC_SOLID_RPI4
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

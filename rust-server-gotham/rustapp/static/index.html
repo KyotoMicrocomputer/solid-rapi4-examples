@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTTP Server Demo</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style type="text/css">
+        html {
+            background: #e8e8e8;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100%;
+            margin: 0;
+            line-height: 1.2;
+        }
+        body {
+            margin: 0;
+        }
+        code {
+            font-family: 'Consolas', 'Andale Mono', 'DejaVu Sans Mono', monospace;
+            background: #eee;
+            border-radius: 2px;
+            padding: 2px 3px;
+        }
+        main {
+            background: #fdfdfd;
+            padding: 1em;
+            margin: 2em;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+            float: left;
+            width: 800px;
+        }
+        h1 {
+            font-weight: 200;
+            margin: 0 4em 0 0;
+        }
+        button {
+            font-family: inherit;
+            font-size:  inherit;
+            background: #666;
+            color: #eee;
+            border: none;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+            margin: 0.4em;
+            padding: 0.4em 0.5em;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            font-size: 95%;
+            cursor: pointer;
+            transition: 0.1s background-color, 0.1s color, 0.1s box-shadow;
+            min-width: 8em;
+        }
+        button:hover { background: #777; box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3); }
+        button:active { background: #808080; color: #fff; }
+        button:disabled { opacity: 0.5; cursor: inherit; }
+        form-action {
+            display: flex;
+            align-items: center;
+        }
+        form-action-help {
+            margin-left: 0.6em;
+            font-size: 90%;
+        }
+        svg {
+            width: 670px;
+            height: 200px;
+        }
+        a { text-decoration: underline; color: #16c; }
+        a:hover { text-decoration: none; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>SOLID + Rust HTTP Server Demo</h1>
+        <p>
+            <form-action>
+                <button id="panic-button">Panic</button>
+                <form-action-help>
+                    Causes a <a href="https://doc.rust-lang.org/stable/book/ch09-01-unrecoverable-errors-with-panic.html" rel="noreferrer" target="_blank">Rust panic</a> on the target device. The web framework will catch the panic and return 500 HTTP status.
+                </form-action-help>
+            </form-action>
+            <form-action>
+                <button id="fetch-button">Fetch</button>
+                <form-action-help>
+                    Fetches the contents of <a href="https://www.example.com" rel="noreferrer" target="_blank"><code>https://www.example.com</code></a> from the target device.
+                </form-action-help>
+            </form-action>
+        </p>
+        <p>
+            CPU usage history (updated every second):
+        </p>
+        <center>
+            <svg xmlns="http://www.w3.org/2000/svg" viewbox="-60 -15 670 200">
+                <defs>
+                    <clipPath id="plot-area">
+                        <rect x="0.5" y="0.5" width="600" height="150" />
+                    </clipPath>
+                </defs>
+                <text x="-5" y="7" style="text-anchor: end;">100%</text>
+                <text x="-5" y="157" style="text-anchor: end;">0%</text>
+                <text x="3" y="168" style="text-anchor: start;" id="temp-date-start"></text>
+                <text x="597" y="168" style="text-anchor: end;" id="temp-date-end"></text>
+
+                <path id="temp-series" style="fill: none; stroke: #e60059; stroke-width: 3px; clip-path: url(#plot-area)" />
+                <circle id="temp-series-point" cx="-100" cy="0" r="5" style="fill: #fff; stroke: #e60059; stroke-width: 2px; clip-path: url(#plot-area)" />
+
+                <rect x="0.5" y="0.5" width="600" height="150" style="fill: none; stroke: #aaa;" />
+            </svg>
+        </center>
+    </main>
+    <script type="application/javascript">
+        (() => {
+            ///////////////////////////////////////////////////////////////////
+            // Plotting
+
+            const UPDATE_INTERVAL = 1000;
+            const HISTORY_LEN = 30;
+            const TIME_RANGE_LEN = UPDATE_INTERVAL * (HISTORY_LEN - 1);
+
+            const svgTempSeries = document.getElementById('temp-series');
+            const svgTempDateStart = document.getElementById('temp-date-start');
+            const svgTempDateEnd = document.getElementById('temp-date-end');
+            const tempPoints = [];
+            const svgTempPoints = [document.getElementById('temp-series-point')];
+
+            function updateChart() {
+                if (tempPoints.length === 0) {
+                    return;
+                }
+
+                const timeRangeStart = Date.now() - TIME_RANGE_LEN + UPDATE_INTERVAL / 2;
+                const points = tempPoints
+                    .map(tempPoint => {
+                        const x = (tempPoint.date.getTime() - timeRangeStart) / TIME_RANGE_LEN * 600;
+                        const y = (1 - tempPoint.value) * 147 + 1.5;
+                        return [x, y];
+                    });
+                const d = points.map(([x, y]) => `${x},${y}`).join(' ');
+                svgTempSeries.setAttribute('d', 'M' + d);
+
+                while (svgTempPoints.length < points.length) {
+                    const newElement = svgTempPoints[0].cloneNode(false);
+                    svgTempPoints.push(newElement);
+                    svgTempPoints[0].parentNode.appendChild(newElement);
+                }
+
+                for (let i = 0; i < points.length; ++i) {
+                    svgTempPoints[i].setAttribute('cx', points[i][0]);
+                    svgTempPoints[i].setAttribute('cy', points[i][1]);
+                }
+
+                const formatDate = d => d.toTimeString().substr(0, 8);
+                svgTempDateStart.textContent = formatDate(new Date(timeRangeStart));
+                svgTempDateEnd.textContent = formatDate(new Date(timeRangeStart + TIME_RANGE_LEN));
+            }
+
+            async function grabSample() {
+                try {
+                    const response = await (await fetch('/v0/sensors')).json();
+
+                    tempPoints.push({
+                        date: new Date(),
+                        value: response.cpu[0],
+                    });
+
+                    if (tempPoints.length > HISTORY_LEN) {
+                        tempPoints.shift();
+                    }
+
+                    updateChart();
+                } catch (e) {
+                    console.warn("Fetch failed, retrying later...");
+                }
+                setTimeout(grabSample, UPDATE_INTERVAL);
+            }
+
+            grabSample();
+
+            setInterval(() => { document.visibilityState == 'visible' && updateChart(); }, 30);
+
+            ///////////////////////////////////////////////////////////////////
+            // Other Buttons
+
+            const panicButton = document.getElementById('panic-button')
+            panicButton.addEventListener('click', async () => {
+                panicButton.disabled = true;
+                panicButton.textContent = 'Panicking...';
+                try {
+                    const response = await fetch('/v0/panic', { method: 'POST' });
+                    if (response.status === 500) {
+                        alert(`The HTTP request failed with status ${response.status}. ` +
+                            `This indicates the device has successfully recovered from a panic.`);
+                    } else {
+                        alert(`The HTTP request failed with status ${response.status}.`);
+                    }
+                } catch (e) {
+                    alert('The HTTP request failed.');
+                }
+                panicButton.disabled = false;
+                panicButton.textContent = 'Panic';
+            });
+
+            const fetchButton = document.getElementById('fetch-button')
+            fetchButton.addEventListener('click', async () => {
+                fetchButton.disabled = true;
+                fetchButton.textContent = 'Working...';
+                try {
+                    const response = await fetch('/v0/fetch/https://www.example.com');
+                    const text = await response.text();
+                    if (response.status === 200) {
+                        alert(`The destination server responded with:\n\n${text}`);
+                    } else {
+                        alert(`The HTTP request failed with status ${response.status}.\n\n${text}`);
+                    }
+                } catch (e) {
+                    alert('The HTTP request failed.');
+                }
+                fetchButton.disabled = false;
+                fetchButton.textContent = 'Fetch';
+            });
+        })();
+    </script>
+</body>
+</html>

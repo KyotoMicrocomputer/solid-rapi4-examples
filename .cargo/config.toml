@@ -1,0 +1,6 @@
+# FIXME: These options may need to be placed in SDK (#3301)
+[target.aarch64-kmc-solid_asp3]
+rustflags = [
+    "-Ztls-model=local-exec",
+    "-Crelocation-model=static",
+]
