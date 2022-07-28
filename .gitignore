@@ -1,0 +1,18 @@
+# Build outputs
+Debug
+Release
+PreObjectOut
+
+# Monitor debugger
+/*/derived
+
+# Backup files
+*.BAK
+*.bak
+.*.sw*
+*~
+
+# SOLID-IDE
+*.ptsuo
+*.db.v2
+*.lockdb
