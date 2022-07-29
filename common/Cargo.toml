@@ -1,0 +1,4 @@
+[workspace]
+members = [
+    "bcm2711_pac",
+]

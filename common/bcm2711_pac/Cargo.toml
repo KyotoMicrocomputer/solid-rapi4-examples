@@ -1,0 +1,8 @@
+[package]
+name = "bcm2711_pac"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tock-registers = "0.7.0"
+macropol = "0.1.3"
