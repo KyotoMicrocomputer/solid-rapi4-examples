@@ -20,6 +20,10 @@ pub extern "C" fn rust_entry() {
     );
 
     // Register a timer
+    // Safety:
+    //  - `TIMER_HANDLER` is pinned throughout the application's lifetime.
+    //  - `TIMER_HANDLER` is not registered by `SOLID_TIMER_RegisterTimer` yet.
+    //  - `TIMER_HANDELR` is writable by the system.
     assert_eq!(
         unsafe { solid_abi::SOLID_TIMER_RegisterTimer(&TIMER_HANDLER) },
         0,
@@ -36,10 +40,19 @@ static TIMER_HANDLER: solid_abi::SOLID_TIMER_HANDLER = solid_abi::SOLID_TIMER_HA
     param: std::ptr::null_mut(),
 };
 
-unsafe extern "C" fn timer_handler(_: *mut (), _: *mut ()) {
-    static mut STATE: bool = false;
-    STATE = !STATE;
-    if STATE {
+/// Tracks the latest LED state
+static mut STATE: bool = false;
+
+extern "C" fn timer_handler(_: *mut (), _: *mut ()) {
+    // Safety: `STATE` is solely accessed by this handler, which is never called
+    // in a reentrant manner, hence no data races will occur.
+    let state = unsafe { &mut STATE };
+
+    // Determine the next LED state
+    *state = !*state;
+
+    // Toggle the LED
+    if *state {
         gpio_regs().gpset[GPIO_NUM / gpio::GPSET::PINS_PER_REGISTER]
             .write(gpio::GPSET::set(GPIO_NUM % gpio::GPSET::PINS_PER_REGISTER));
     } else {
@@ -49,7 +62,7 @@ unsafe extern "C" fn timer_handler(_: *mut (), _: *mut ()) {
     }
 }
 
-/// SOLID Core Services low-level binding
+/// SOLID-OS low-level binding
 #[allow(non_snake_case)]
 mod solid_abi {
     use core::cell::UnsafeCell;
