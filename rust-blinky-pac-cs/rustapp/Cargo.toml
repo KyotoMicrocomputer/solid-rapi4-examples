@@ -9,6 +9,8 @@ edition = "2021"
 tock-registers = "0.7.0"
 
 bcm2711_pac.path = "../../common/bcm2711_pac"
+solid.path = "../../common/solid"
+solid.features = ["std"]
 
 [lib]
 crate-type = ["staticlib"]

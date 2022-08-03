@@ -1,6 +1,4 @@
-﻿#![feature(const_option)] // `Option::unwrap` in a constant context
-use bcm2711_pac::gpio;
-use core::cell::UnsafeCell;
+﻿use bcm2711_pac::gpio;
 use tock_registers::interfaces::{ReadWriteable, Writeable};
 
 #[inline]
@@ -19,70 +17,39 @@ pub extern "C" fn rust_entry() {
         gpio::GPFSEL::pin(GPIO_NUM % gpio::GPFSEL::PINS_PER_REGISTER).val(gpio::GPFSEL::OUTPUT),
     );
 
-    // Register a timer
-    // Safety:
-    //  - `TIMER_HANDLER` is pinned throughout the application's lifetime.
-    //  - `TIMER_HANDLER` is not registered by `SOLID_TIMER_RegisterTimer` yet.
-    //  - `TIMER_HANDELR` is writable by the system.
-    assert_eq!(
-        unsafe { solid_abi::SOLID_TIMER_RegisterTimer(&TIMER_HANDLER) },
-        0,
+    // Tracks the latest LED state
+    let mut state = false;
+
+    // Construct a timer object on heap
+    //
+    // (There are ways to do this on a global variable, but we would need either
+    // unsafe code or incomplete unstable features to do this ergonomically for now.)
+    let mut timer = Box::pin(solid::timer::Timer::new(
+        solid::timer::Schedule::Interval(solid::timer::Usecs32(200_000)),
+        move |_: solid::thread::CpuCx<'_>| {
+            // Determine the next LED state
+            state = !state;
+
+            // Toggle the LED
+            if state {
+                gpio_regs().gpset[GPIO_NUM / gpio::GPSET::PINS_PER_REGISTER]
+                    .write(gpio::GPSET::set(GPIO_NUM % gpio::GPSET::PINS_PER_REGISTER));
+            } else {
+                gpio_regs().gpclr[GPIO_NUM / gpio::GPCLR::PINS_PER_REGISTER].write(
+                    gpio::GPCLR::clear(GPIO_NUM % gpio::GPCLR::PINS_PER_REGISTER),
+                );
+            }
+        },
+    ));
+
+    // Start the timer
+    assert!(
+        timer.as_mut().start().expect("unable to start timer"),
+        "timer was already running"
     );
-}
 
-static TIMER_HANDLER: solid_abi::SOLID_TIMER_HANDLER = solid_abi::SOLID_TIMER_HANDLER {
-    pNext: UnsafeCell::new(std::ptr::null_mut()),
-    pCallQ: UnsafeCell::new(std::ptr::null_mut()),
-    globalTick: UnsafeCell::new(0),
-    r#type: solid_abi::SOLID_TIMER_TYPE_INTERVAL,
-    time: 200_000, // usec
-    func: timer_handler,
-    param: std::ptr::null_mut(),
-};
+    assert!(timer.is_running());
 
-/// Tracks the latest LED state
-static mut STATE: bool = false;
-
-extern "C" fn timer_handler(_: *mut (), _: *mut ()) {
-    // Safety: `STATE` is solely accessed by this handler, which is never called
-    // in a reentrant manner, hence no data races will occur.
-    let state = unsafe { &mut STATE };
-
-    // Determine the next LED state
-    *state = !*state;
-
-    // Toggle the LED
-    if *state {
-        gpio_regs().gpset[GPIO_NUM / gpio::GPSET::PINS_PER_REGISTER]
-            .write(gpio::GPSET::set(GPIO_NUM % gpio::GPSET::PINS_PER_REGISTER));
-    } else {
-        gpio_regs().gpclr[GPIO_NUM / gpio::GPCLR::PINS_PER_REGISTER].write(gpio::GPCLR::clear(
-            GPIO_NUM % gpio::GPCLR::PINS_PER_REGISTER,
-        ));
-    }
-}
-
-/// SOLID-OS low-level binding
-#[allow(non_snake_case)]
-mod solid_abi {
-    use core::cell::UnsafeCell;
-
-    extern "C" {
-        pub fn SOLID_TIMER_RegisterTimer(pHandler: *const SOLID_TIMER_HANDLER) -> i32;
-    }
-
-    pub const SOLID_TIMER_TYPE_INTERVAL: i32 = 1;
-
-    #[repr(C)]
-    pub struct SOLID_TIMER_HANDLER {
-        pub pNext: UnsafeCell<*mut Self>,
-        pub pCallQ: UnsafeCell<*mut Self>,
-        pub globalTick: UnsafeCell<u64>,
-        pub r#type: i32,
-        pub time: u32,
-        pub func: unsafe extern "C" fn(param: *mut (), ctx: *mut ()),
-        pub param: *mut (),
-    }
-
-    unsafe impl Sync for SOLID_TIMER_HANDLER {}
+    // Keep the timer alive
+    std::mem::forget(timer);
 }

@@ -1,0 +1,17 @@
+[package]
+name = "solid"
+version = "0.0.1"
+edition = "2021"
+
+[features]
+default = []
+alloc = []
+std = ["alloc"]
+
+[dependencies]
+autocxx = "0.22.0"
+cxx = "1.0"
+
+[build-dependencies]
+autocxx-build = "0.22.0"
+miette = { version = "4.7", features = ["fancy"] }

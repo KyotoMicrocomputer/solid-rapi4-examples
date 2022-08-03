@@ -4,6 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <ProjectGuid>{9c1e67a2-4733-4cde-afb4-087840ba9f3f}</ProjectGuid>
+    <CargoEnvironmentVariables>
+      BUILD_INCLUDE_DIRS=$expand:{"projectName":"rust-blinky-pac-cs", "type": "property", "query": "IncludePath"}
+      BUILD_CFLAGS=$expand:{"projectName":"rust-blinky-pac-cs", "type": "property", "query": "GCCSW"}
+    </CargoEnvironmentVariables>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|KMC_SOLID_RPI4' ">
     <OutputPath>$(SolutionDir)$(Configuration)</OutputPath>
