@@ -10,6 +10,7 @@ pub mod abi;
 pub mod error;
 pub mod fs;
 pub mod interrupt;
+pub mod loader;
 pub mod smp;
 pub mod thread;
 pub mod timer;

@@ -44,8 +44,25 @@ include_cpp! {
     generate!("SOLID_TIMER_HANDLER_OFFSET6")
     generate!("SOLID_CORE_MAX")
 
+    generate!("SOLID_LDR_GetAddr")
+    generate!("SOLID_LDR_GetDllAddr")
+    generate!("SOLID_LDR_LoadFile")
+    generate!("SOLID_LDR_LoadDLL")
+    // TODO: Needs a newer SDK
+    // generate!("SOLID_LDR_Load")
+    generate!("SOLID_LDR_CanExec")
+    generate!("SOLID_LDR_UnLoad")
+    generate!("SOLID_LDR_RegisterSymbol")
+    generate!("SOLID_LDR_CheckUnresolved")
+    generate!("SOLID_LDR_GetManagedAreaInfo")
+    generate!("SOLID_LDR_GetObjectName")
+    generate!("SOLID_LDR_GetObjectSection")
+    // TODO: Needs a newer SDK
+    // generate!("SOLID_LDR_GetObjectArea")
+
     generate!("SOLID_CPU_CONTEXT")
     generate!("SOLID_REGISTER")
+    generate!("SOLID_ADDRESS")
 }
 
 #[cxx::bridge]

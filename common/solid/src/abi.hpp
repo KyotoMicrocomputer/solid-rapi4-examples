@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "solid_timer.h"
 #include "solid_smp.h"
+#include "solid_loader.h"
 
 #ifdef SOLID_TIMER_EACHCPU
 static constexpr size_t DEFINED_SOLID_TIMER_EACHCPU = 1;
