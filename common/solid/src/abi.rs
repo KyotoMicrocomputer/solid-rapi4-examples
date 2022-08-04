@@ -31,6 +31,7 @@ include_cpp! {
     generate!("SOLID_SMP_SetJump")
     generate!("SOLID_SMP_CPUMASK_ALL")
     generate!("SOLID_SMP_CPUMASK_OTHER")
+    generate!("SOLID_SMP_REQFLAG_A2CONTEXT")
 
     // TODO: Make these `pub(crate)`
     generate!("DEFINED_SOLID_TIMER_EACHCPU")
