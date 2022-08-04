@@ -123,3 +123,19 @@ pub unsafe fn SOLID_MUTEX_PopInt(status: SOLID_REGISTER) {
         },
     }
 }
+
+#[inline]
+pub unsafe fn SOLID_MUTEX_DisInt() {
+    match () {
+        #[cfg(target_arch = "aarch64")]
+        () => asm!("msr DAIFset,#2"),
+    }
+}
+
+#[inline]
+pub unsafe fn SOLID_MUTEX_EnaInt() {
+    match () {
+        #[cfg(target_arch = "aarch64")]
+        () => asm!("msr DAIFclr,#2"),
+    }
+}

@@ -22,3 +22,21 @@ where
 
     f(&CriticalSection(()))
 }
+
+/// Enable interrupts.
+///
+/// # Safety
+///
+/// Calling this function may interfere with the operations of active critical
+/// sections, such as those made by `SOLID_EnterCriticalSection`.
+#[inline]
+pub unsafe fn enable() {
+    // Safety: Upheld by the caller
+    unsafe { abi::SOLID_MUTEX_EnaInt() };
+}
+
+/// Disable interrupts.
+#[inline]
+pub fn disable() {
+    unsafe { abi::SOLID_MUTEX_DisInt() };
+}
