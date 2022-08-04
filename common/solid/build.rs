@@ -18,5 +18,6 @@ fn main() -> miette::Result<()> {
     b.flag_if_supported("-std=c++14").compile("rustapp-ffi");
 
     println!("cargo:rerun-if-changed=src/abi.rs");
+    println!("cargo:rerun-if-changed=src/abi.hpp");
     Ok(())
 }

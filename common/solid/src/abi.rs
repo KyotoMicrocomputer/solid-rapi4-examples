@@ -25,10 +25,12 @@ include_cpp! {
 
     // TODO: Incorrect definition of SOLID_SMP_GetCpuId due to #3310
     // generate!("SOLID_SMP_GetCpuId")
-    generate!("SOLID_SMP_ForEachCpu")
+    // generate!("SOLID_SMP_ForEachCpu")
     generate!("SOLID_SMP_RequestExec")
-    generate!("SOLID_SMP_SetRegister")
+    // generate!("SOLID_SMP_SetRegister")
     generate!("SOLID_SMP_SetJump")
+    generate!("SOLID_SMP_CPUMASK_ALL")
+    generate!("SOLID_SMP_CPUMASK_OTHER")
 
     // TODO: Make these `pub(crate)`
     generate!("DEFINED_SOLID_TIMER_EACHCPU")
@@ -39,6 +41,7 @@ include_cpp! {
     generate!("SOLID_TIMER_HANDLER_OFFSET4")
     generate!("SOLID_TIMER_HANDLER_OFFSET5")
     generate!("SOLID_TIMER_HANDLER_OFFSET6")
+    generate!("SOLID_CORE_MAX")
 
     generate!("SOLID_CPU_CONTEXT")
     generate!("SOLID_REGISTER")
@@ -70,10 +73,28 @@ mod ffi2 {
 
 pub use self::{ffi::*, ffi2::*};
 pub use autocxx::c_int;
+pub use core::ffi::c_void;
+
+pub type SOLID_SMP_DOFUNC_T = Option<unsafe extern "C" fn(arg1: *mut c_void, arg2: *mut c_void)>;
 
 extern "C" {
     // TODO: Manually definition is necessary due to #3310
     pub fn SOLID_SMP_GetCpuId() -> c_int;
+
+    // TODO: autocxx doesn't generate the bindings for these
+    pub fn SOLID_SMP_ForEachCpu(
+        pFunc: SOLID_SMP_DOFUNC_T,
+        arg1: *mut c_void,
+        arg2: *mut c_void,
+        cpumask: u32,
+    ) -> c_int;
+    pub fn SOLID_SMP_RequestExec(
+        cpuId: c_int,
+        pFunc: SOLID_SMP_DOFUNC_T,
+        arg1: *mut c_void,
+        arg2: *mut c_void,
+        flags: c_int,
+    ) -> c_int;
 }
 
 // TODO: Do we really want to keep using `autocxx::c_int`? `autocxx` doesn't
@@ -137,5 +158,21 @@ pub unsafe fn SOLID_MUTEX_EnaInt() {
     match () {
         #[cfg(target_arch = "aarch64")]
         () => asm!("msr DAIFclr,#2"),
+    }
+}
+
+#[inline]
+pub(crate) unsafe fn __DMB() {
+    match () {
+        #[cfg(target_arch = "aarch64")]
+        () => asm!("dmb sy"),
+    }
+}
+
+#[inline]
+pub(crate) unsafe fn __DSB() {
+    match () {
+        #[cfg(target_arch = "aarch64")]
+        () => asm!("dsb sy"),
     }
 }
