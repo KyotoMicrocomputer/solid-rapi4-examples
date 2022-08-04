@@ -1,3 +1,8 @@
+//! High-level binding for SOLID Timer API
+//!
+//! # External Code Assumptions
+//!
+//! - All timer handlers in the application return with interrupts disabled.
 use core::{
     fmt,
     pin::Pin,
@@ -88,9 +93,7 @@ impl fmt::Debug for Nsecs32 {
 ///
 /// # Processor states
 ///
-/// The handler is called in an interrupt context with all interrupts disabled.
-///
-/// TODO: Is it safe to re-enable interrupts here?
+/// The handler is called in an interrupt context with interrupts enabled.
 pub trait TimerHandler: Send + private::Sealed + 'static {
     /// Call the timer handler.
     ///
@@ -107,6 +110,21 @@ pub trait TimerHandler: Send + private::Sealed + 'static {
 impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> TimerHandler for T {
     #[inline]
     unsafe fn call(mut self: Pin<&mut Self>, cx: CpuCx<'_>) {
+        struct Guard;
+        impl Drop for Guard {
+            fn drop(&mut self) {
+                interrupt::disable();
+            }
+        }
+
+        // Re-enable interrupts.
+        //
+        // Safety: We are not inside a SOLID critical section. We make sure to
+        // re-disable interrupts before returning. See "External Code
+        // Assumptions".
+        unsafe { interrupt::enable() };
+        let _guard = Guard;
+
         (*self)(cx);
     }
 }
@@ -287,8 +305,6 @@ impl<T: TimerHandler> Timer<T> {
             // Safety: `Self` is `!Unpin`, and we maintain the pinning
             // guarantees of `this.handler`
             let handler = unsafe { Pin::new_unchecked(handler) };
-            // TODO: Re-enable interrupts before calling `handler.call`? This
-            //       is the only place where it's safe to do so.
             // Safety: We are calling it from a timer handler, which is allowed
             // to do this
             unsafe { handler.call(cpu_cx) };
@@ -361,6 +377,10 @@ impl<T: TimerHandler> Timer<T> {
             // - `self.inner` is not registered.
             // - `inner.param` is initialized properly (the precondition of
             //   `Self::handler_trampoline`).
+            // - External code assumption: All timer handlers return with
+            //   interrupts disabled, so we are not running inside an interrupt
+            //   handler that started by preempting the execution of the part of
+            //   `Timer::Notify` that accesses `Timer::m_pQueue`.
             let result = unsafe { abi::SOLID_TIMER_RegisterTimer(self.inner.get()) };
             match result {
                 abi::SOLID_ERR_PAR => return Err(TimerStartError::BadParam),
@@ -408,8 +428,13 @@ impl<T: TimerHandler> Timer<T> {
         //   `self.owning_processor_id_p1` at the correct timing if we did
         //   `SOLID_TIMER_UnRegisterTimer` in this case.
         //
-        // TODO: There's another possibility if we allow re-enabling interrupts
-        // in a timer handler
+        // - We are inside an interrupt handler started by preempting the
+        //   execution of a timer handler (but not in an arbitrary point of
+        //   `Notify::Timer`; see "External Code Assumptions"). `SOLID_TIMER_
+        //   [Un]RegisterTimer` internally employs a critical section, so there
+        //   is no danger of data races. However, since we are essentially
+        //   executing in the system timer handler, the previous bullet point
+        //   applies to this case.
         if may_be_interrupt_context() {
             return Err(TimerStopError::BadContext);
         }
