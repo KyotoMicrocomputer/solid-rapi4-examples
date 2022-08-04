@@ -6,29 +6,6 @@ use core::{
 
 use crate::{abi, thread::CpuCx, utils::abort_on_unwind};
 
-/// A set of processors.
-pub struct ProcessorSet {
-    bits: u32,
-}
-
-impl ProcessorSet {
-    /// Construct a `ProcessorSet` from a bitfield, ignoring non-existent
-    /// processors.
-    #[inline]
-    pub fn from_bits_truncating(mut bits: u32) -> Self {
-        if abi::SOLID_CORE_MAX < u32::BITS {
-            bits = bits & ((1 << abi::SOLID_CORE_MAX) - 1);
-        }
-        Self { bits }
-    }
-
-    /// Construct a `ProcessorSet` including all processors in the system.
-    #[inline]
-    pub fn all() -> Self {
-        Self::from_bits_truncating(u32::MAX)
-    }
-}
-
 /// Get the current processor ID (zero-based).
 #[inline]
 pub fn current_processor_id() -> usize {
@@ -48,87 +25,6 @@ pub enum RemoteCallError {
     /// The current processor ID or an invalid processor ID  was specified as
     /// the target for [`call_on_processor_no_unwind`].
     BadProcessor,
-}
-
-/// Call the specified closure on the specified processors.
-///
-/// The closure will be called in a inter-processor interrupt handler. The
-/// execution might be delayed if the target processors have interrupts
-/// disabled.
-///
-/// Panics in the closure will abort the program.
-#[inline]
-pub fn call_on_processors_no_unwind<T>(mask: ProcessorSet, f: T) -> Result<(), RemoteCallError>
-where
-    T: Fn() + Sync,
-{
-    unsafe extern "C" fn trampoline<T: Fn()>(f: *mut abi::c_void, _: *mut abi::c_void) {
-        // Safety: `f` refers to `f` in the parent scope.
-        let f = unsafe { &*f.cast::<T>() };
-        abort_on_unwind(|| f());
-    }
-
-    // Safety:
-    // - `T` is safe to call from other processors.
-    // - `trampoline` doesn't unwind.
-    // - All `trampoline` calls issued here synchronize-with the completion
-    //   of this `SOLID_SMP_ForEachCpu` call. (solid-os de9aca526 or later)
-    let result = unsafe {
-        abi::SOLID_SMP_ForEachCpu(
-            Some(trampoline::<T>),
-            NonNull::from(&f).cast().as_ptr(),
-            null_mut(),
-            mask.bits,
-        )
-    };
-
-    #[cold]
-    fn map_err(result: abi::c_int) -> RemoteCallError {
-        match result {
-            abi::SOLID_ERR_NOTREADY => RemoteCallError::NotReady,
-            abi::c_int(e) => panic!("SOLID_SMP_ForEachCPU failed: {e}"),
-        }
-    }
-
-    if result != abi::SOLID_ERR_OK {
-        Err(map_err(result))
-    } else {
-        Ok(())
-    }
-}
-
-/// Call the specified closure on the specified processors, propagating panics
-/// to the caller.
-///
-/// The closure will be called in a inter-processor interrupt handler. The
-/// execution might be delayed if the target processors have interrupts
-/// disabled.
-///
-/// If more than one closure calls panic, all but the first one will be
-/// discarded.
-#[inline]
-pub fn call_on_processors<T>(mask: ProcessorSet, f: T) -> Result<(), RemoteCallError>
-where
-    T: Fn() + Sync,
-{
-    // TODO: Optimize for `cfg(panic = "abort")`
-    use std::panic::{catch_unwind, resume_unwind, AssertUnwindSafe};
-    use sync_wrapper::SyncWrapper;
-    let caught_panic_cell = once_cell::sync::OnceCell::new();
-    {
-        let caught_panic_cell = &caught_panic_cell;
-        call_on_processors_no_unwind(mask, move || {
-            if let Err(e) = catch_unwind(AssertUnwindSafe(&f)) {
-                // Store the information of the caught panic. Keep only the first
-                // one and discard the others.
-                let _ = caught_panic_cell.set(SyncWrapper::new(e));
-            }
-        })?;
-    }
-    if let Some(caught_panic) = caught_panic_cell.into_inner() {
-        resume_unwind(caught_panic.into_inner());
-    }
-    Ok(())
 }
 
 /// Call the specified closure on the specified processor.
