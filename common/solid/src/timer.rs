@@ -78,6 +78,8 @@ impl fmt::Debug for Nsecs32 {
 
 /// A timer handler for [`Timer`].
 ///
+/// This trait is sealed; it can not be implemented externally.
+///
 /// `Send`: The handler will run with no synchronization with the creator
 /// thread.
 ///
@@ -89,7 +91,7 @@ impl fmt::Debug for Nsecs32 {
 /// The handler is called in an interrupt context with all interrupts disabled.
 ///
 /// TODO: Is it safe to re-enable interrupts here?
-pub trait TimerHandler: Send + 'static {
+pub trait TimerHandler: Send + private::Sealed + 'static {
     /// Call the timer handler.
     ///
     /// # Safety
@@ -117,6 +119,15 @@ impl<T: TimerHandler> TimerHandler for Option<T> {
             unsafe { inner.call(cx) }
         }
     }
+}
+
+mod private {
+    use super::*;
+    /// Sealed trait pattern (prevents external implementations of
+    /// `TimerHandler`)
+    pub trait Sealed {}
+    impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> Sealed for T {}
+    impl<T: TimerHandler> Sealed for Option<T> {}
 }
 
 /// The schedule for [`Timer`].
