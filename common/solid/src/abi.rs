@@ -2,7 +2,8 @@
 #![allow(non_snake_case)]
 #![allow(unsafe_op_in_unsafe_fn)] // google/autocxx#578
 use autocxx::prelude::*;
-use core::arch::asm;
+use core::{arch::asm, mem::size_of};
+use memoffset::offset_of;
 
 include_cpp! {
     #include "src/abi.hpp"
@@ -42,6 +43,7 @@ include_cpp! {
     generate!("SOLID_TIMER_HANDLER_OFFSET4")
     generate!("SOLID_TIMER_HANDLER_OFFSET5")
     generate!("SOLID_TIMER_HANDLER_OFFSET6")
+    generate!("SOLID_TIMER_HANDLER_SIZE")
     generate!("SOLID_CORE_MAX")
 
     generate!("SOLID_LDR_GetAddr")
@@ -88,6 +90,18 @@ mod ffi2 {
         pub param: *mut u8,
     }
 }
+
+/// Layout check of `SOLID_TIMER_HANDLER`
+const _: () = {
+    assert!(SOLID_TIMER_HANDLER_OFFSET0 == offset_of!(SOLID_TIMER_HANDLER, pNext));
+    assert!(SOLID_TIMER_HANDLER_OFFSET1 == offset_of!(SOLID_TIMER_HANDLER, pCallQ));
+    assert!(SOLID_TIMER_HANDLER_OFFSET2 == offset_of!(SOLID_TIMER_HANDLER, globalTick));
+    assert!(SOLID_TIMER_HANDLER_OFFSET3 == offset_of!(SOLID_TIMER_HANDLER, ty));
+    assert!(SOLID_TIMER_HANDLER_OFFSET4 == offset_of!(SOLID_TIMER_HANDLER, time));
+    assert!(SOLID_TIMER_HANDLER_OFFSET5 == offset_of!(SOLID_TIMER_HANDLER, func));
+    assert!(SOLID_TIMER_HANDLER_OFFSET6 == offset_of!(SOLID_TIMER_HANDLER, param));
+    assert!(SOLID_TIMER_HANDLER_SIZE == size_of::<SOLID_TIMER_HANDLER>());
+};
 
 pub use self::{ffi::*, ffi2::*};
 pub use autocxx::c_int;

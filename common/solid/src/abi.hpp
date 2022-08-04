@@ -17,4 +17,5 @@ static constexpr size_t SOLID_TIMER_HANDLER_OFFSET3 = offsetof(SOLID_TIMER_HANDL
 static constexpr size_t SOLID_TIMER_HANDLER_OFFSET4 = offsetof(SOLID_TIMER_HANDLER, time);
 static constexpr size_t SOLID_TIMER_HANDLER_OFFSET5 = offsetof(SOLID_TIMER_HANDLER, func);
 static constexpr size_t SOLID_TIMER_HANDLER_OFFSET6 = offsetof(SOLID_TIMER_HANDLER, param);
+static constexpr size_t SOLID_TIMER_HANDLER_SIZE = sizeof(SOLID_TIMER_HANDLER);
 
