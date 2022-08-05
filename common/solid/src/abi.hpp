@@ -19,3 +19,4 @@ static constexpr size_t SOLID_TIMER_HANDLER_OFFSET5 = offsetof(SOLID_TIMER_HANDL
 static constexpr size_t SOLID_TIMER_HANDLER_OFFSET6 = offsetof(SOLID_TIMER_HANDLER, param);
 static constexpr size_t SOLID_TIMER_HANDLER_SIZE = sizeof(SOLID_TIMER_HANDLER);
 
+static constexpr size_t SOLID_CORE_MAX_VALUE = SOLID_CORE_MAX;

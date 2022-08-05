@@ -44,7 +44,7 @@ include_cpp! {
     generate!("SOLID_TIMER_HANDLER_OFFSET5")
     generate!("SOLID_TIMER_HANDLER_OFFSET6")
     generate!("SOLID_TIMER_HANDLER_SIZE")
-    generate!("SOLID_CORE_MAX")
+    generate!("SOLID_CORE_MAX_VALUE")
 
     generate!("SOLID_LDR_GetAddr")
     generate!("SOLID_LDR_GetDllAddr")
@@ -149,6 +149,8 @@ pub const SOLID_ERR_BUSY: c_int = c_int(-1009);
 pub const SOLID_ERR_TIMEOUT: c_int = c_int(-1010);
 pub const SOLID_ERR_INVALIDACCESS: c_int = c_int(-1011);
 pub const SOLID_ERR_NOTREADY: c_int = c_int(-1012);
+
+pub const SOLID_CORE_MAX: usize = SOLID_CORE_MAX_VALUE;
 
 #[inline]
 pub unsafe fn SOLID_MUTEX_PushInt() -> SOLID_REGISTER {

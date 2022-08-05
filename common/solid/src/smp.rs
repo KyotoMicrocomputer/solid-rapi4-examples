@@ -15,7 +15,7 @@ pub fn current_processor_id() -> usize {
 /// Get the number of processors in the system.
 #[inline]
 pub fn num_processors() -> usize {
-    abi::SOLID_CORE_MAX as usize
+    abi::SOLID_CORE_MAX
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
