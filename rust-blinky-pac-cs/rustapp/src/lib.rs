@@ -1,23 +1,12 @@
-﻿use bcm2711_pac::gpio;
-use tock_registers::interfaces::{ReadWriteable, Writeable};
-
-#[inline]
-fn gpio_regs() -> &'static gpio::Registers {
-    // Safety: SOLID for RaPi4B provides an identity mapping in this area, and we don't alter
-    // the mapping
-    unsafe { &*(gpio::BASE.to_arm_pa().unwrap() as usize as *const gpio::Registers) }
-}
-
-const GPIO_NUM: usize = 42;
-
-#[no_mangle]
+﻿#[no_mangle]
 pub extern "C" fn rust_entry() {
-    // Configure the GPIO pin for output
-    gpio_regs().gpfsel[GPIO_NUM / gpio::GPFSEL::PINS_PER_REGISTER].modify(
-        gpio::GPFSEL::pin(GPIO_NUM % gpio::GPFSEL::PINS_PER_REGISTER).val(gpio::GPFSEL::OUTPUT),
-    );
+    println!("Starting LED blinker");
 
-    // Tracks the latest LED state
+    // Configure the LED port
+    green_led::init();
+
+    // Tracks the latest LED state. Moved into the handler closure when
+    // we create `solid::timer::Timer`.
     let mut state = false;
 
     // Construct a timer object on heap
@@ -31,14 +20,7 @@ pub extern "C" fn rust_entry() {
             state = !state;
 
             // Toggle the LED
-            if state {
-                gpio_regs().gpset[GPIO_NUM / gpio::GPSET::PINS_PER_REGISTER]
-                    .write(gpio::GPSET::set(GPIO_NUM % gpio::GPSET::PINS_PER_REGISTER));
-            } else {
-                gpio_regs().gpclr[GPIO_NUM / gpio::GPCLR::PINS_PER_REGISTER].write(
-                    gpio::GPCLR::clear(GPIO_NUM % gpio::GPCLR::PINS_PER_REGISTER),
-                );
-            }
+            green_led::update(state);
         },
     ));
 
@@ -52,4 +34,35 @@ pub extern "C" fn rust_entry() {
 
     // Keep the timer alive
     std::mem::forget(timer);
+}
+
+mod green_led {
+    use bcm2711_pac::gpio;
+    use tock_registers::interfaces::{ReadWriteable, Writeable};
+
+    const GPIO_NUM: usize = 42;
+
+    fn gpio_regs() -> &'static gpio::Registers {
+        // Safety: SOLID for RaPi4B provides an identity mapping in this area, and we don't alter
+        // the mapping
+        unsafe { &*(gpio::BASE.to_arm_pa().unwrap() as usize as *const gpio::Registers) }
+    }
+
+    pub fn init() {
+        // Configure the GPIO pin for output
+        gpio_regs().gpfsel[GPIO_NUM / gpio::GPFSEL::PINS_PER_REGISTER].modify(
+            gpio::GPFSEL::pin(GPIO_NUM % gpio::GPFSEL::PINS_PER_REGISTER).val(gpio::GPFSEL::OUTPUT),
+        );
+    }
+
+    pub fn update(new_state: bool) {
+        if new_state {
+            gpio_regs().gpset[GPIO_NUM / gpio::GPSET::PINS_PER_REGISTER]
+                .write(gpio::GPSET::set(GPIO_NUM % gpio::GPSET::PINS_PER_REGISTER));
+        } else {
+            gpio_regs().gpclr[GPIO_NUM / gpio::GPCLR::PINS_PER_REGISTER].write(gpio::GPCLR::clear(
+                GPIO_NUM % gpio::GPCLR::PINS_PER_REGISTER,
+            ));
+        }
+    }
 }
