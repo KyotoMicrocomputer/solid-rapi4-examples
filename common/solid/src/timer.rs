@@ -359,7 +359,7 @@ impl<T: TimerHandler> Timer<T> {
             // to call `SOLID_TIMER_[Un]RegisterTimer` from other processors in
             // this case.
             let current_processor_id_p1 = current_processor_id_p1();
-            if abi::DEFINED_SOLID_TIMER_EACHCPU == 0 && current_processor_id_p1 != 1 {
+            if !abi::SOLID_TIMER_EACHCPU && current_processor_id_p1 != 1 {
                 return Err(TimerStartError::BadProcessor);
             }
 

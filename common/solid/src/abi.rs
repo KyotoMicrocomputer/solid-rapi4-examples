@@ -34,18 +34,6 @@ include_cpp! {
     generate!("SOLID_SMP_CPUMASK_OTHER")
     generate!("SOLID_SMP_REQFLAG_A2CONTEXT")
 
-    // TODO: Make these `pub(crate)`
-    generate!("DEFINED_SOLID_TIMER_EACHCPU")
-    generate!("SOLID_TIMER_HANDLER_OFFSET0")
-    generate!("SOLID_TIMER_HANDLER_OFFSET1")
-    generate!("SOLID_TIMER_HANDLER_OFFSET2")
-    generate!("SOLID_TIMER_HANDLER_OFFSET3")
-    generate!("SOLID_TIMER_HANDLER_OFFSET4")
-    generate!("SOLID_TIMER_HANDLER_OFFSET5")
-    generate!("SOLID_TIMER_HANDLER_OFFSET6")
-    generate!("SOLID_TIMER_HANDLER_SIZE")
-    generate!("SOLID_CORE_MAX_VALUE")
-
     generate!("SOLID_LDR_GetAddr")
     generate!("SOLID_LDR_GetDllAddr")
     generate!("SOLID_LDR_LoadFile")
@@ -65,6 +53,18 @@ include_cpp! {
     generate!("SOLID_CPU_CONTEXT")
     generate!("SOLID_REGISTER")
     generate!("SOLID_ADDRESS")
+
+    // TODO: Make these `pub(crate)`
+    generate!("_SOLID_RS_SOLID_TIMER_EACHCPU")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET0")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET1")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET2")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET3")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET4")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET5")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET6")
+    generate!("_SOLID_RS_SOLID_TIMER_HANDLER_SIZE")
+    generate!("_SOLID_RS_SOLID_CORE_MAX")
 }
 
 #[cxx::bridge]
@@ -93,14 +93,14 @@ mod ffi2 {
 
 /// Layout check of `SOLID_TIMER_HANDLER`
 const _: () = {
-    assert!(SOLID_TIMER_HANDLER_OFFSET0 == offset_of!(SOLID_TIMER_HANDLER, pNext));
-    assert!(SOLID_TIMER_HANDLER_OFFSET1 == offset_of!(SOLID_TIMER_HANDLER, pCallQ));
-    assert!(SOLID_TIMER_HANDLER_OFFSET2 == offset_of!(SOLID_TIMER_HANDLER, globalTick));
-    assert!(SOLID_TIMER_HANDLER_OFFSET3 == offset_of!(SOLID_TIMER_HANDLER, ty));
-    assert!(SOLID_TIMER_HANDLER_OFFSET4 == offset_of!(SOLID_TIMER_HANDLER, time));
-    assert!(SOLID_TIMER_HANDLER_OFFSET5 == offset_of!(SOLID_TIMER_HANDLER, func));
-    assert!(SOLID_TIMER_HANDLER_OFFSET6 == offset_of!(SOLID_TIMER_HANDLER, param));
-    assert!(SOLID_TIMER_HANDLER_SIZE == size_of::<SOLID_TIMER_HANDLER>());
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET0 == offset_of!(SOLID_TIMER_HANDLER, pNext));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET1 == offset_of!(SOLID_TIMER_HANDLER, pCallQ));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET2 == offset_of!(SOLID_TIMER_HANDLER, globalTick));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET3 == offset_of!(SOLID_TIMER_HANDLER, ty));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET4 == offset_of!(SOLID_TIMER_HANDLER, time));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET5 == offset_of!(SOLID_TIMER_HANDLER, func));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET6 == offset_of!(SOLID_TIMER_HANDLER, param));
+    assert!(_SOLID_RS_SOLID_TIMER_HANDLER_SIZE == size_of::<SOLID_TIMER_HANDLER>());
 };
 
 pub use self::{ffi::*, ffi2::*};
@@ -150,7 +150,8 @@ pub const SOLID_ERR_TIMEOUT: c_int = c_int(-1010);
 pub const SOLID_ERR_INVALIDACCESS: c_int = c_int(-1011);
 pub const SOLID_ERR_NOTREADY: c_int = c_int(-1012);
 
-pub const SOLID_CORE_MAX: usize = SOLID_CORE_MAX_VALUE;
+pub const SOLID_TIMER_EACHCPU: bool = _SOLID_RS_SOLID_TIMER_EACHCPU;
+pub const SOLID_CORE_MAX: usize = _SOLID_RS_SOLID_CORE_MAX;
 
 #[inline]
 pub unsafe fn SOLID_MUTEX_PushInt() -> SOLID_REGISTER {
