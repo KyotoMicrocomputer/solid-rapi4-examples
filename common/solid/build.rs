@@ -8,11 +8,16 @@ fn main() -> miette::Result<()> {
     let this_path = env::var("CARGO_MANIFEST_DIR").unwrap();
     include_dirs.insert(0, this_path.as_str());
 
-    let mut b = autocxx_build::Builder::new("src/abi.rs", &include_dirs).build()?;
-
     println!("cargo:rerun-if-env-changed=BUILD_CFLAGS");
     let flags = env::var("BUILD_CFLAGS").unwrap();
-    for flag in flags.split_ascii_whitespace() {
+    dbg!(&flags);
+    let flags = flags.split_ascii_whitespace();
+
+    let mut b = autocxx_build::Builder::new("src/abi.rs", &include_dirs)
+        .extra_clang_args(&flags.clone().collect::<Vec<_>>())
+        .build()?;
+
+    for flag in flags {
         b.flag(flag);
     }
     b.flag_if_supported("-std=c++14").compile("rustapp-ffi");
