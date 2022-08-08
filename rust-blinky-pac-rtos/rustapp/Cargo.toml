@@ -1,0 +1,16 @@
+[package]
+name = "rustapp"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tock-registers = "0.7.0"
+itron = { version = "= 0.1.9", features = ["unstable", "nightly", "solid_fmp3"] }
+
+bcm2711_pac.path = "../../common/bcm2711_pac"
+
+[lib]
+crate-type = ["staticlib"]
+
