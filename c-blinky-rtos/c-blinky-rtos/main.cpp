@@ -20,7 +20,7 @@ void update(bool new_state)
 {
     auto reg = reinterpret_cast<volatile std::uint32_t *>(GPIO_BASE + ((GPIO_NUM / 32) << 2)
         + (new_state ? 0x1c /* GPSET1 */ : 0x28 /* GPCLR1 */));
-    *reg |= 1 << (GPIO_NUM % 32);
+    *reg = 1 << (GPIO_NUM % 32);
 }
 
 } // namespace green_led

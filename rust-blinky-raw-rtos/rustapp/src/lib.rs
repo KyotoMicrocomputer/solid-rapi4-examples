@@ -55,7 +55,7 @@ mod green_led {
                 } else {
                     0x28 /* GPCLR1 */
                 }) as *mut u32; // GPFSEL4
-            reg.write_volatile(reg.read_volatile() | (1 << (GPIO_NUM % 32)));
+            reg.write_volatile(1 << (GPIO_NUM % 32));
         }
     }
 }
