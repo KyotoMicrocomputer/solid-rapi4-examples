@@ -2,6 +2,7 @@
 
 ## サンプル一覧
 
+- **[c-blinky-ap804](./c-blinky-ap804)**: AP804ハードウェアタイマーを使用したLチカ
 - **[c-blinky-cs](./c-blinky-cs)**: SOLID-OSタイマAPIを使用したLチカ
 - **[c-blinky-rtos](./c-blinky-rtos)**: RTOS APIを使用したLチカ
 - **[rust-blinky-pac-cs](./rust-blinky-pac-cs)**: SOLID-OSタイマAPIと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
