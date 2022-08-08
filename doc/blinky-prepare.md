@@ -1,6 +1,6 @@
 # Lチカの準備
 
-Raspberry Pi 4BにはオンボードLEDが2つ (緑と赤) が付いていて、緑のほうはGPIO 42から制御できるようになっています。Linuxが起動した直後はSDカードアクセスの度に緑色のLEDが点滅するようになっています。
+Raspberry Pi 4BにはオンボードLEDが2つ (緑と赤) が付いており、緑のほうはGPIO 42から制御できるようになっています。Linuxが起動した直後はSDカードのアクセスインジケーターとして使用するよう設定されています。
 
 <div><p><details>
 <summary>初期状態</summary>
@@ -33,5 +33,5 @@ lock kbd-shiftllock kbd-shiftrlock kbd-ctrlllock kbd-ctrlrlock timer oneshot hea
 </p></div>
 </details></p></div>
 
-これで、緑色のLEDをSOLID-OS側で操作する準備が完了します。
+これで、LED (緑) をSOLID-OS側で操作する準備が完了します。
 
