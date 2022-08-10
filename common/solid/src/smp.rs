@@ -56,6 +56,9 @@ pub enum RemoteCallError {
 /// execution might be delayed if the target processors have interrupts
 /// disabled.
 ///
+/// The closure executions may be serialized if the internal command pool is
+/// exhausted.
+///
 /// Panics in the closure will abort the program.
 #[inline]
 pub fn call_on_processors_no_unwind<T>(mask: ProcessorSet, f: T) -> Result<(), RemoteCallError>
@@ -103,6 +106,9 @@ where
 /// The closure will be called in a inter-processor interrupt handler. The
 /// execution might be delayed if the target processors have interrupts
 /// disabled.
+///
+/// The closure executions may be serialized if the internal command pool is
+/// exhausted.
 ///
 /// If more than one closure calls panic, all but the first one will be
 /// discarded.
