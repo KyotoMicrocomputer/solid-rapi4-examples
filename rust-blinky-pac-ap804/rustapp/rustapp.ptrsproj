@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(KMCRustTargetsPath)\KMC.Rust.props" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{9c1e67a2-4733-4cde-afb4-087840ba9f3f}</ProjectGuid>
+    <CargoEnvironmentVariables>
+      BUILD_INCLUDE_DIRS=$expand:{"projectName":"rust-blinky-pac-ap804", "type": "property", "query": "IncludePath"}
+      BUILD_CFLAGS=$expand:{"projectName":"rust-blinky-pac-ap804", "type": "property", "query": "GCCSW"}
+    </CargoEnvironmentVariables>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|KMC_SOLID_RPI4' ">
+    <OutputPath>$(SolutionDir)$(Configuration)</OutputPath>
+    <RustTarget>aarch64-kmc-solid_asp3</RustTarget>
+    <CargoProfile>dev</CargoProfile>
+    <ManageCargoBuildConfiguration>True</ManageCargoBuildConfiguration>
+    <DebugInfo>2</DebugInfo>
+    <UseEXEGCC>True</UseEXEGCC>
+    <GCC_DEFAULT>armv8aLn</GCC_DEFAULT>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|KMC_SOLID_RPI4' ">
+    <OutputPath>$(SolutionDir)$(Configuration)</OutputPath>
+    <RustTarget>aarch64-kmc-solid_asp3</RustTarget>
+    <CargoProfile>release</CargoProfile>
+    <ManageCargoBuildConfiguration>True</ManageCargoBuildConfiguration>
+    <DebugInfo>2</DebugInfo>
+    <UseEXEGCC>True</UseEXEGCC>
+    <GCC_DEFAULT>armv8aLn</GCC_DEFAULT>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Cargo.toml" />
+    <Content Include="Cargo.lock" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\lib.rs" />
+  </ItemGroup>
+  <Import Project="$(KMCRustTargetsPath)\KMC.Rust.targets" />
+</Project>

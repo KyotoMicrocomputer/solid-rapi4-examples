@@ -5,6 +5,7 @@
 - **[c-blinky-ap804](./c-blinky-ap804)**: AP804ハードウェアタイマーを使用したLチカ
 - **[c-blinky-cs](./c-blinky-cs)**: SOLID-OSタイマAPIを使用したLチカ
 - **[c-blinky-rtos](./c-blinky-rtos)**: RTOS APIを使用したLチカ
+- **[rust-blinky-pac-ap804](./rust-blinky-pac-ap804)**: AP804ハードウェアタイマーと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
 - **[rust-blinky-pac-cs](./rust-blinky-pac-cs)**: SOLID-OSタイマAPIと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
 - **[rust-blinky-pac-rtos](./rust-blinky-pac-rtos)**: RTOS APIと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
 - **[rust-blinky-pac-std](./rust-blinky-pac-std)**: Rust標準ライブラリと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
