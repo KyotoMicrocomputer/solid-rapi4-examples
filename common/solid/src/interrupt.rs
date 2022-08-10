@@ -248,7 +248,10 @@ impl<T: HandlerFn> Handler<T> {
     }
 
     /// The outer interrupt handler.
-    unsafe extern "C" fn handler_trampoline(param: *mut u8, cpu_cx: *mut abi::SOLID_CPU_CONTEXT) {
+    unsafe extern "C" fn handler_trampoline(
+        param: *mut u8,
+        cpu_cx: *mut abi::SOLID_CPU_CONTEXT,
+    ) -> abi::c_int {
         abort_on_unwind(|| {
             // Safety: `param`'s value is taken from the corresponding handler
             // object's `SOLID_INTC_HANDLER::param`. `Self::register` derives
@@ -272,6 +275,8 @@ impl<T: HandlerFn> Handler<T> {
             // Safety: We are calling it from a SOLID interrupt handler, which
             // is allowed to do this
             unsafe { handler.call(cpu_cx) };
+
+            abi::SOLID_ERR_OK
         })
     }
 

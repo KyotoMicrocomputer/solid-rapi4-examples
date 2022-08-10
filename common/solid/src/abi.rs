@@ -202,7 +202,7 @@ mod ffi2 {
         pub intno: i32,
         pub priority: i32,
         pub config: i32,
-        /// `unsafe extern "C" fn(param: Cx, ctx: Cx)`
+        /// `unsafe extern "C" fn(param: Cx, ctx: Cx) -> c_int`
         pub func: *mut u8,
         /// `Cx`
         pub param: *mut u8,
