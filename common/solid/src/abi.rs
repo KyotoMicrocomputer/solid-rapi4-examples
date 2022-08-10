@@ -72,6 +72,8 @@ include_cpp! {
     generate!("SOLID_MEM_MINFO_MMU_L2")
     generate!("SOLID_MEM_MINFO_DLLAREA")
 
+    generate!("SOLID_TLS_AddDestructor")
+
     generate!("SOLID_TIMER_TYPE_ONESHOT")
     generate!("SOLID_TIMER_TYPE_INTERVAL")
     generate!("SOLID_TIMER_TYPE_GLOBALTICK")
