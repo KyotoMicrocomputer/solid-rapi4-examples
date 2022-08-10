@@ -12,6 +12,20 @@ pub struct ProcessorSet {
 }
 
 impl ProcessorSet {
+    /// Construct a `ProcessorSet` comprising of a single processor.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if an invalid processor ID is specified.
+    #[inline]
+    pub const fn single(processor_id: usize) -> Self {
+        assert!(
+            processor_id < abi::SOLID_CORE_MAX,
+            "processor ID out of range"
+        );
+        Self::from_bits_truncating(1u32 << processor_id)
+    }
+
     /// Construct a `ProcessorSet` from a bitfield, ignoring non-existent
     /// processors.
     #[inline]
