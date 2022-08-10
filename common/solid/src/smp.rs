@@ -7,6 +7,7 @@ use core::{
 use crate::{abi, thread::CpuCx, utils::abort_on_unwind};
 
 /// A set of processors.
+#[derive(Clone, PartialEq, Eq, Hash, Debug)]
 pub struct ProcessorSet {
     bits: u32,
 }
