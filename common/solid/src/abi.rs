@@ -9,6 +9,7 @@ include_cpp! {
     #include "src/abi.hpp"
 
     extern_cpp_opaque_type!("SOLID_TIMER_HANDLER", super::SOLID_TIMER_HANDLER)
+    extern_cpp_opaque_type!("SOLID_INTC_HANDLER", super::SOLID_INTC_HANDLER)
 
     generate!("SOLID_TIMER_TYPE_ONESHOT")
     generate!("SOLID_TIMER_TYPE_INTERVAL")
@@ -50,6 +51,43 @@ include_cpp! {
     // TODO: Needs a newer SDK
     // generate!("SOLID_LDR_GetObjectArea")
 
+    generate!("SOLID_INTC_Register")
+    generate!("SOLID_INTC_UnRegister")
+    generate!("SOLID_INTC_CallSGI")
+    generate!("SOLID_INTC_CallSGIEx")
+    generate!("SOLID_INTC_Disable")
+    generate!("SOLID_INTC_Enable")
+    generate!("SOLID_INTC_GetStatus")
+    generate!("SOLID_INTC_SetPriorityMask")
+    generate!("SOLID_INTC_GetPriorityMask")
+    generate!("SOLID_INTC_GetPriorityLevel")
+    generate!("SOLID_INTC_GetMinIntNo")
+    generate!("SOLID_INTC_GetMaxIntNo")
+    generate!("SOLID_INTC_GetIntPriority")
+    generate!("SOLID_INTC_SetIntPriority")
+    generate!("SOLID_INTC_GetIntConfig")
+    generate!("SOLID_INTC_SetIntConfig")
+    generate!("SOLID_INTC_ClearPending")
+    generate!("SOLID_INTC_SetPending")
+    generate!("SOLID_INTC_IsPending")
+    generate!("SOLID_INTC_SetHook")
+    generate!("SOLID_INTC_RegisterWithTargetProcess")
+    generate!("SOLID_INTC_SetTargetProcess")
+    generate!("SOLID_INTC_GetTargetProcess")
+    generate!("SOLID_INTC_DisableM")
+    generate!("SOLID_INTC_EnableM")
+    generate!("SOLID_INTC_SetIntPriorityM")
+    generate!("SOLID_INTC_EXTRASGINO")
+    // generate!("SOLID_INTC_CPUBITS_ALL")
+    // generate!("SOLID_INTC_CPUBITS_OTHERS")
+    // generate!("SOLID_INTC_CPUBITS_SELF")
+    generate!("SOLID_INTC_STATUS_ENABLED")
+    generate!("SOLID_INTC_STATUS_PENDING")
+    generate!("SOLID_INTC_STATUS_ACTIVE")
+    generate!("SOLID_INTC_CONFIG_MASK")
+    generate!("SOLID_INTC_CONFIG_LEVEL_SENSITIVE")
+    generate!("SOLID_INTC_CONFIG_EDGE_TRIGGERED")
+
     generate!("SOLID_CPU_CONTEXT")
     generate!("SOLID_REGISTER")
     generate!("SOLID_ADDRESS")
@@ -64,6 +102,12 @@ include_cpp! {
     generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET5")
     generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET6")
     generate!("_SOLID_RS_SOLID_TIMER_HANDLER_SIZE")
+    generate!("_SOLID_RS_SOLID_INTC_HANDLER_OFFSET0")
+    generate!("_SOLID_RS_SOLID_INTC_HANDLER_OFFSET1")
+    generate!("_SOLID_RS_SOLID_INTC_HANDLER_OFFSET2")
+    generate!("_SOLID_RS_SOLID_INTC_HANDLER_OFFSET3")
+    generate!("_SOLID_RS_SOLID_INTC_HANDLER_OFFSET4")
+    generate!("_SOLID_RS_SOLID_INTC_HANDLER_SIZE")
     generate!("_SOLID_RS_SOLID_CORE_MAX")
 }
 
@@ -89,6 +133,17 @@ mod ffi2 {
         /// `Cx`
         pub param: *mut u8,
     }
+
+    // TODO: Ditto.
+    pub struct SOLID_INTC_HANDLER {
+        pub intno: i32,
+        pub priority: i32,
+        pub config: i32,
+        /// `unsafe extern "C" fn(param: Cx, ctx: Cx)`
+        pub func: *mut u8,
+        /// `Cx`
+        pub param: *mut u8,
+    }
 }
 
 /// Layout check of `SOLID_TIMER_HANDLER`
@@ -101,6 +156,16 @@ const _: () = {
     assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET5 == offset_of!(SOLID_TIMER_HANDLER, func));
     assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET6 == offset_of!(SOLID_TIMER_HANDLER, param));
     assert!(_SOLID_RS_SOLID_TIMER_HANDLER_SIZE == size_of::<SOLID_TIMER_HANDLER>());
+};
+
+/// Layout check of `SOLID_INTC_HANDLER`
+const _: () = {
+    assert!(_SOLID_RS_SOLID_INTC_HANDLER_OFFSET0 == offset_of!(SOLID_INTC_HANDLER, intno));
+    assert!(_SOLID_RS_SOLID_INTC_HANDLER_OFFSET1 == offset_of!(SOLID_INTC_HANDLER, priority));
+    assert!(_SOLID_RS_SOLID_INTC_HANDLER_OFFSET2 == offset_of!(SOLID_INTC_HANDLER, config));
+    assert!(_SOLID_RS_SOLID_INTC_HANDLER_OFFSET3 == offset_of!(SOLID_INTC_HANDLER, func));
+    assert!(_SOLID_RS_SOLID_INTC_HANDLER_OFFSET4 == offset_of!(SOLID_INTC_HANDLER, param));
+    assert!(_SOLID_RS_SOLID_INTC_HANDLER_SIZE == size_of::<SOLID_INTC_HANDLER>());
 };
 
 pub use self::{ffi::*, ffi2::*};
@@ -152,6 +217,8 @@ pub const SOLID_ERR_NOTREADY: c_int = c_int(-1012);
 
 pub const SOLID_TIMER_EACHCPU: bool = _SOLID_RS_SOLID_TIMER_EACHCPU;
 pub const SOLID_CORE_MAX: usize = _SOLID_RS_SOLID_CORE_MAX;
+
+pub(crate) const GIC_MAXINTNO: usize = 1019;
 
 #[inline]
 pub unsafe fn SOLID_MUTEX_PushInt() -> SOLID_REGISTER {
