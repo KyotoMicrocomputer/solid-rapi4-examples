@@ -96,7 +96,7 @@ extern "C" void slo_main()
     // Initialize the interrupt handler object for the AP804 interrupt line
     g_handler.intno = ap804::INTNO;
     g_handler.priority = 10;
-    g_handler.config = -1;
+    g_handler.config = 0b00; // level-triggered
     g_handler.func = [](void *, SOLID_CPU_CONTEXT *) {
         // Clear the AP804 instance's interrupt flag
         ap804::clear_int();
@@ -112,7 +112,8 @@ extern "C" void slo_main()
     g_handler.param = NULL;
 
     // Register the interrupt handler object for the AP804 interrupt line
-    int ret = SOLID_INTC_Register(&g_handler);
+    int target_processor = 1;
+    int ret = SOLID_INTC_RegisterWithTargetProcess(&g_handler, 1 << target_processor);
     solid_cs_assert(ret == SOLID_ERR_OK);
 
     // Enable the AP804 interrupt line

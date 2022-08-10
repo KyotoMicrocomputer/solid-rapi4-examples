@@ -35,7 +35,11 @@ pub extern "C" fn rust_entry() {
     // Register the interrupt handler
     assert!(
         handler
-            .register_static(&solid::interrupt::HandlerOptions::new(ap804::INTNO, 10))
+            .register_static(
+                &solid::interrupt::HandlerOptions::new(ap804::INTNO, 10)
+                    .with_level_triggered()
+                    .with_target_processor(1)
+            )
             .expect("unable to register interrupt handler"),
         "interrupt handler was already registered"
     );
