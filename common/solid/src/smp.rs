@@ -29,7 +29,7 @@ impl ProcessorSet {
     /// Construct a `ProcessorSet` from a bitfield, ignoring non-existent
     /// processors.
     #[inline]
-    pub fn from_bits_truncating(mut bits: u32) -> Self {
+    pub const fn from_bits_truncating(mut bits: u32) -> Self {
         if abi::SOLID_CORE_MAX < u32::BITS as usize {
             bits = bits & ((1 << abi::SOLID_CORE_MAX) - 1);
         }
@@ -38,7 +38,7 @@ impl ProcessorSet {
 
     /// Construct a `ProcessorSet` including all processors in the system.
     #[inline]
-    pub fn all() -> Self {
+    pub const fn all() -> Self {
         Self::from_bits_truncating(u32::MAX)
     }
 }
