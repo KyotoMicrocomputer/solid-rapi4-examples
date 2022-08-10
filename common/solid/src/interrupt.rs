@@ -119,6 +119,66 @@ mod private {
     impl<T: HandlerFn> Sealed for Option<T> {}
 }
 
+/// Options for [`Handler::register`].
+#[derive(Clone, Debug)]
+pub struct HandlerOptions {
+    intno: Number,
+    priority: i32,
+    config: i32,
+    processor_set: smp::ProcessorSet,
+}
+
+impl HandlerOptions {
+    /// Construct a `HandlerOptions` with default option values and the
+    /// specified interrupt number and priority.
+    #[inline]
+    pub const fn new(intno: Number, priority: i32) -> Self {
+        Self {
+            intno,
+            priority,
+            config: -1,
+            processor_set: smp::ProcessorSet::single(0),
+        }
+    }
+
+    /// Update `self` to configure the interrupt line as edge-triggered.
+    #[inline]
+    pub const fn with_edge_triggered(self) -> Self {
+        Self {
+            config: 0b10,
+            ..self
+        }
+    }
+
+    /// Update `self` to configure the interrupt line as level-sensitive.
+    #[inline]
+    pub const fn with_level_triggered(self) -> Self {
+        Self {
+            config: 0b10,
+            ..self
+        }
+    }
+
+    /// Update `self` to target the specified processor.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if an invalid processor ID is specified.
+    #[inline]
+    pub const fn with_target_processor(self, processor_id: usize) -> Self {
+        self.with_target_processor_set(smp::ProcessorSet::single(processor_id))
+    }
+
+    /// Update `self` to target the specified processors.
+    #[inline]
+    pub const fn with_target_processor_set(self, processor_set: smp::ProcessorSet) -> Self {
+        Self {
+            processor_set,
+            ..self
+        }
+    }
+}
+
 /// The error type for [`Handler::register`].
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
 pub enum RegisterError {
@@ -126,7 +186,8 @@ pub enum RegisterError {
     /// processor_id)` (PPI) or `intno` (SPI).
     InterruptLineAlreadyHasHandler,
     /// The parameters of the interrupt handler are incorrect. For example, the
-    /// priority is out of range.
+    /// priority is out of range, or the target processor set includes a
+    /// processor other than the first eight ones.
     BadParam,
 }
 
@@ -170,14 +231,15 @@ impl<T: HandlerFn> Drop for Handler<T> {
 impl<T: HandlerFn> Handler<T> {
     /// Construct an unregistered `Handler`.
     #[inline]
-    pub const fn new(Number(intno): Number, priority: i32, handler: T) -> Self {
+    pub const fn new(handler: T) -> Self {
         Self {
             inner: abi::SOLID_INTC_HANDLER {
-                intno,
-                priority,
-                config: -1,
-                func: Self::handler_trampoline as _,
-                param: null_mut(), // set later
+                // zeroed to allow placing it in .bss
+                intno: 0,
+                priority: 0,
+                config: 0,
+                func: null_mut(),
+                param: null_mut(),
             },
             line: Line(0),
             handler: UnsafeCell::new(handler),
@@ -230,10 +292,13 @@ impl<T: HandlerFn> Handler<T> {
     ///
     /// See [`Self::register`] for semantics.
     #[inline]
-    pub fn register_static(self: Pin<&'static mut Self>) -> Result<bool, RegisterError> {
+    pub fn register_static(
+        self: Pin<&'static mut Self>,
+        options: &HandlerOptions,
+    ) -> Result<bool, RegisterError> {
         // Safety: `*self` is never dropped, hence the unsafe destructor will
         // never run
-        unsafe { self.register() }
+        unsafe { self.register(options) }
     }
 
     /// Register the interrupt handler.
@@ -254,7 +319,15 @@ impl<T: HandlerFn> Handler<T> {
     ///
     /// If you have a `'static` reference to `Self`, consider using
     /// [`Self::register_static`] instead.
-    pub unsafe fn register(self: Pin<&mut Self>) -> Result<bool, RegisterError> {
+    pub unsafe fn register(
+        self: Pin<&mut Self>,
+        &HandlerOptions {
+            intno,
+            priority,
+            config,
+            ref processor_set,
+        }: &HandlerOptions,
+    ) -> Result<bool, RegisterError> {
         // Safety: We preserve the pinning invariants of the contained values
         let this = unsafe { Pin::get_unchecked_mut(self) };
 
@@ -266,13 +339,27 @@ impl<T: HandlerFn> Handler<T> {
         // Disable interrupts to prevent processor migration and prevent
         // deadlock while doing `line.lock()`
         free(|_| {
-            let line = Line::from_intno_for_current_processor(Number(this.inner.intno))
-                .ok_or(RegisterError::BadParam)?;
+            let line =
+                Line::from_intno_for_current_processor(intno).ok_or(RegisterError::BadParam)?;
             let _line_guard = line.lock();
 
-            // Assign `SOLID_INTC_HANDLER::param`. Since `*self` is pinned, we
-            // know its address is stable until `Self::drop` is called.
-            this.inner.param = &*this as *const _ as *mut _;
+            // `SOLID_INTC_RegisterWithTargetProcess`'s definition restricts the
+            // selectable processors to the first eight ones in the system
+            let processor_set: i8 = u8::try_from(processor_set.as_u32_bits())
+                .map_err(|_| RegisterError::BadParam)? as i8;
+
+            this.inner = abi::SOLID_INTC_HANDLER {
+                intno: intno.0,
+                priority,
+                config,
+                // TODO: This is the only thing that differs between
+                // the instantiations of this function with different `T`s.
+                // Reduce the monomorphization cost
+                func: Self::handler_trampoline as _,
+                // Since `*self` is pinned, we know its address is stable until
+                // `Self::drop` is called.
+                param: &*this as *const _ as *mut _,
+            };
             debug_assert!(this.is_registered());
 
             // Register `self.inner` to the system interrupt handler table
@@ -289,8 +376,12 @@ impl<T: HandlerFn> Handler<T> {
             // - External code assumption: External code does not cause racy
             //   memory accesses by making conflicting `SOLID_INTC_Register`
             //   calls.
-            // TODO: support setting the target processor set
-            let result = unsafe { abi::SOLID_INTC_Register((&this.inner) as *const _ as *mut _) };
+            let result = unsafe {
+                abi::SOLID_INTC_RegisterWithTargetProcess(
+                    (&this.inner) as *const _ as *mut _,
+                    processor_set,
+                )
+            };
             if result != abi::SOLID_ERR_OK {
                 // Undo the effect on error
                 this.inner.param = null_mut();

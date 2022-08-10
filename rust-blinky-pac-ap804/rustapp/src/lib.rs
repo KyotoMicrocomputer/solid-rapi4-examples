@@ -17,8 +17,6 @@ pub extern "C" fn rust_entry() {
     // (There are ways to do this on a global variable, but we would need either
     // unsafe code or incomplete unstable features to do this ergonomically for now.)
     let handler = Box::new(solid::interrupt::Handler::new(
-        ap804::INTNO,
-        10,
         move |_: solid::thread::CpuCx<'_>| {
             // Clear the AP804 instance's interrupt flag
             ap804::clear_int();
@@ -37,7 +35,7 @@ pub extern "C" fn rust_entry() {
     // Register the interrupt handler
     assert!(
         handler
-            .register_static()
+            .register_static(&solid::interrupt::HandlerOptions::new(ap804::INTNO, 10))
             .expect("unable to register interrupt handler"),
         "interrupt handler was already registered"
     );

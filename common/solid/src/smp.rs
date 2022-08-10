@@ -42,6 +42,11 @@ impl ProcessorSet {
     pub const fn all() -> Self {
         Self::from_bits_truncating(u32::MAX)
     }
+
+    #[inline]
+    pub(crate) const fn as_u32_bits(&self) -> u32 {
+        self.bits
+    }
 }
 
 /// Get the current processor ID (zero-based).
