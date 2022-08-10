@@ -1,5 +1,6 @@
 #pragma once
 #include <stdlib.h>
+#include "solid_mem.h"
 #include "solid_timer.h"
 #include "solid_smp.h"
 #include "solid_loader.h"
