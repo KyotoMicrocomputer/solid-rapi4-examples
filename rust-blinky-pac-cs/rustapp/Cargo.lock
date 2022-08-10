@@ -804,6 +804,8 @@ dependencies = [
  "memoffset",
  "miette",
  "paste",
+ "once_cell",
+ "sync_wrapper",
 ]
 
 [[package]]

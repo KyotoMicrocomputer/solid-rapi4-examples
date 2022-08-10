@@ -820,7 +820,9 @@ dependencies = [
  "macropol",
  "memoffset",
  "miette",
+ "once_cell",
  "paste",
+ "sync_wrapper",
 ]
 
 [[package]]
@@ -895,6 +897,12 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "sync_wrapper"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20518fe4a4c9acf048008599e464deb21beeae3d3578418951a189c235a7a9a8"
 
 [[package]]
 name = "tempfile"
