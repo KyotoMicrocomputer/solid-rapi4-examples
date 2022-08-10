@@ -191,9 +191,8 @@ mod ffi2 {
         pub ty: u32,
         /// The timer period, measured in microseconds.
         pub time: u32,
-        /// `unsafe extern "C" fn(param: Cx, ctx: Cx)`
+        /// `unsafe extern "C" fn(param: *mut u8, ctx: *mut SOLID_CPU_CONTEXT)`
         pub func: *mut u8,
-        /// `Cx`
         pub param: *mut u8,
     }
 
@@ -202,9 +201,8 @@ mod ffi2 {
         pub intno: i32,
         pub priority: i32,
         pub config: i32,
-        /// `unsafe extern "C" fn(param: Cx, ctx: Cx) -> c_int`
+        /// `unsafe extern "C" fn(param: *mut u8, ctx: *mut SOLID_CPU_CONTEXT) -> c_int`
         pub func: *mut u8,
-        /// `Cx`
         pub param: *mut u8,
     }
 }
