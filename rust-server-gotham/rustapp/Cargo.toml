@@ -24,6 +24,10 @@ quickcheck = "1.0.3"
 rayon = "1.5.1"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
+takecell = "0.1.1"
+
+solid.path = "../../common/solid"
+solid.features = ["std"]
 
 # Replace some dependencies with forks with SOLID support
 [patch.crates-io]

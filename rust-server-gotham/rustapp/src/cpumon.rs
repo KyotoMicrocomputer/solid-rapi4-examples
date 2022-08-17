@@ -1,51 +1,45 @@
 ﻿//! CPU usage monitor
-#![allow(non_snake_case)]
-use std::{cell::UnsafeCell, sync::atomic};
+use solid::{thread::CpuCx, timer};
+use std::{pin::Pin, sync::atomic};
+use takecell::TakeCell;
 
-mod solid_abi {
-    use super::*;
+/// The timer to measure CPU activity.
+static TIMER: TakeCell<timer::Timer<fn(CpuCx<'_>)>> = TakeCell::new(timer::Timer::new(
+    timer::Schedule::Interval(timer::Usecs32(1_000)),
+    timer_handler,
+));
 
-    extern "C" {
-        pub fn SOLID_TIMER_RegisterTimer(pHandler: *const SOLID_TIMER_HANDLER) -> i32;
-        pub fn SOLID_MEM_IsValid(va: usize, size: usize) -> i32;
-    }
+pub fn init() {
+    // Get a mutable reference to the `Timer` object. Each instance of `TakeCell` allows us to do
+    // this *only once*. In exchange, we can get `&'static mut Timer`.
+    if let Some(handler) = TIMER.take() {
+        // Convert `&'static mut Timer` to `Pin<&'static mut Timer>` (a pinned mutable reference).
+        //
+        // `&'static mut Timer` can be safely interpreted as a pinned reference `Pin<&'static mut
+        // Timer>`. You need a pinned reference to call `Timer::start` because you must keep the
+        // contained `SOLID_TIMER_HANDLER` alive while it's linked to the system timer list.
+        let handler = Pin::static_mut(handler);
 
-    pub const SOLID_TIMER_TYPE_INTERVAL: i32 = 1;
-
-    #[repr(C)]
-    pub struct SOLID_TIMER_HANDLER {
-        pub pNext: UnsafeCell<*mut Self>,
-        pub pCallQ: UnsafeCell<*mut Self>,
-        pub globalTick: UnsafeCell<u64>,
-        pub r#type: i32,
-        pub time: u32,
-        pub func: unsafe extern "C" fn(param: *mut (), ctx: *mut SOLID_CPU_CONTEXT),
-        pub param: *mut (),
-    }
-
-    unsafe impl Sync for SOLID_TIMER_HANDLER {}
-
-    #[repr(C)]
-    pub struct SOLID_CPU_CONTEXT {
-        pub xarm: [usize; 31],
-        pub sp: usize,
-        pub pc: usize,
-        pub pstate: u32,
-        pub spsel: u32,
-        pub pNext: *mut Self,
-        pub pFPU: *mut (),
+        // Start the timer.
+        assert!(
+            handler.start().expect("unable to start timer"),
+            "timer was already running"
+        );
     }
 }
 
-static TIMER_HANDLER: solid_abi::SOLID_TIMER_HANDLER = solid_abi::SOLID_TIMER_HANDLER {
-    pNext: UnsafeCell::new(std::ptr::null_mut()),
-    pCallQ: UnsafeCell::new(std::ptr::null_mut()),
-    globalTick: UnsafeCell::new(0),
-    r#type: solid_abi::SOLID_TIMER_TYPE_INTERVAL,
-    time: 1000, // usec
-    func: timer_handler,
-    param: std::ptr::null_mut(),
-};
+/// Get the recent CPU usage, measured as a real value between zero and one.
+pub fn current_cpu_usage() -> [f32; 1] {
+    // FIXME: Get the second core's CPU usage as well
+    let st = &STATE;
+    let numerator: u32 = st
+        .busy_history
+        .iter()
+        .map(|x| x.load(atomic::Ordering::Relaxed).count_ones())
+        .sum();
+    let denominator = st.busy_history.len() as u32 * usize::BITS;
+    [numerator as f32 / denominator as f32]
+}
 
 struct State {
     cursor: atomic::AtomicUsize,
@@ -61,12 +55,13 @@ static STATE: State = State {
     busy_history: [ZERO; 16],
 };
 
-unsafe extern "C" fn timer_handler(_: *mut (), ctx: *mut solid_abi::SOLID_CPU_CONTEXT) {
+fn timer_handler(cx: CpuCx<'_>) {
     // Check if the timer was taken on a WFI instruction
     let taken_on_wfi = unsafe {
         // If that's indeed the case, `ctx.pc` should point to the next instruction
-        let ptr = (*ctx).pc.wrapping_sub(4);
-        ptr % 4 == 0 && solid_abi::SOLID_MEM_IsValid(ptr, 4) != 0 && {
+        let cx = cx.as_raw().as_ref();
+        let ptr = cx.pc.wrapping_sub(4);
+        ptr % 4 == 0 && solid::abi::SOLID_MEM_IsValid(ptr as _, 4).0 != 0 && {
             let instr = (ptr as *const u32).read_volatile();
             instr == 0xD503207F // WFI
         }
@@ -88,25 +83,4 @@ unsafe extern "C" fn timer_handler(_: *mut (), ctx: *mut solid_abi::SOLID_CPU_CO
         bmp |= mask;
     }
     st.busy_history[i].store(bmp, atomic::Ordering::Relaxed);
-}
-
-pub fn init() {
-    static INITED: atomic::AtomicBool = atomic::AtomicBool::new(false);
-    if !INITED.swap(true, atomic::Ordering::Relaxed) {
-        let ret = unsafe { solid_abi::SOLID_TIMER_RegisterTimer(&TIMER_HANDLER) };
-        assert_eq!(ret, 0);
-    }
-}
-
-/// Get the recent CPU usage, measured as a real value between zero and one.
-pub fn current_cpu_usage() -> [f32; 1] {
-    // FIXME: Get the second core's CPU usage as well
-    let st = &STATE;
-    let numerator: u32 = st
-        .busy_history
-        .iter()
-        .map(|x| x.load(atomic::Ordering::Relaxed).count_ones())
-        .sum();
-    let denominator = st.busy_history.len() as u32 * usize::BITS;
-    [numerator as f32 / denominator as f32]
 }
