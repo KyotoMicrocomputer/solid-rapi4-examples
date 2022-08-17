@@ -10,6 +10,8 @@ include_cpp! {
 
     extern_cpp_opaque_type!("SOLID_TIMER_HANDLER", super::SOLID_TIMER_HANDLER)
     extern_cpp_opaque_type!("SOLID_INTC_HANDLER", super::SOLID_INTC_HANDLER)
+    extern_cpp_opaque_type!("SOLID_VECTOR_HANDLER", super::SOLID_VECTOR_HANDLER)
+    extern_cpp_opaque_type!("SOLID_SVC_HANDLER", super::SOLID_SVC_HANDLER)
 
     generate!("SOLID_MEM_Alloc")
     generate!("SOLID_MEM_AllocFlat")
@@ -73,6 +75,13 @@ include_cpp! {
     generate!("SOLID_MEM_MINFO_DLLAREA")
 
     generate!("SOLID_TLS_AddDestructor")
+
+    // solid_vector.h
+    generate!("SOLID_VECTOR_Register")
+    generate!("SOLID_VECTOR_UnRegister")
+    generate!("SOLID_VECTOR_IsInInterrupt")
+    generate!("SOLID_SVC_Register")
+    generate!("SOLID_SVC_UnRegister")
 
     generate!("SOLID_TIMER_TYPE_ONESHOT")
     generate!("SOLID_TIMER_TYPE_INTERVAL")
@@ -205,6 +214,19 @@ mod ffi2 {
         pub func: *mut u8,
         pub param: *mut u8,
     }
+
+    pub struct SOLID_VECTOR_HANDLER {
+        pub pNext: *mut SOLID_VECTOR_HANDLER,
+        /// `unsafe extern "C" fn(param: Cx, ctx: *mut SOLID_CPU_CONTEXT) -> c_int`
+        pub func: *mut u8,
+        pub param: *mut u8,
+    }
+
+    pub struct SOLID_SVC_HANDLER {
+        /// `unsafe extern "C" fn(param: Cx, ctx: *mut SOLID_CPU_CONTEXT)`
+        pub func: *mut u8,
+        pub param: *mut u8,
+    }
 }
 
 /// Layout check of `SOLID_TIMER_HANDLER`
@@ -275,6 +297,25 @@ pub const SOLID_ERR_BUSY: c_int = c_int(-1009);
 pub const SOLID_ERR_TIMEOUT: c_int = c_int(-1010);
 pub const SOLID_ERR_INVALIDACCESS: c_int = c_int(-1011);
 pub const SOLID_ERR_NOTREADY: c_int = c_int(-1012);
+
+// solid_vector.h
+cfg_if::cfg_if! {
+    if #[cfg(target_arch = "aarch64")] {
+        pub const SOLID_VECTOR_SYNC: c_int = c_int(0);
+        pub const SOLID_VECTOR_IRQ: c_int = c_int(1);
+        pub const SOLID_VECTOR_FIQ: c_int = c_int(2);
+        pub const SOLID_VECTOR_SERR: c_int = c_int(3);
+        pub const SOLID_VECTOR_MAX: c_int = c_int(4);
+    } else if #[cfg(target_arch = "arm")] {
+        pub const SOLID_VECTOR_UNDEF: c_int = c_int(0);
+        pub const SOLID_VECTOR_SWI: c_int = c_int(1);
+        pub const SOLID_VECTOR_PREFETCH: c_int = c_int(2);
+        pub const SOLID_VECTOR_DATAABORT: c_int = c_int(3);
+        pub const SOLID_VECTOR_IRQ: c_int = c_int(4);
+        pub const SOLID_VECTOR_FIQ: c_int = c_int(5);
+        pub const SOLID_VECTOR_MAX: c_int = c_int(6);
+    }
+}
 
 pub const SOLID_TIMER_EACHCPU: bool = _SOLID_RS_SOLID_TIMER_EACHCPU;
 pub const SOLID_CORE_MAX: usize = _SOLID_RS_SOLID_CORE_MAX;

@@ -5,6 +5,7 @@
 #include "solid_smp.h"
 #include "solid_loader.h"
 #include "solid_intc.h"
+#include "solid_vector.h"
 
 #ifdef SOLID_TIMER_EACHCPU
 static constexpr bool _SOLID_RS_SOLID_TIMER_EACHCPU = true;

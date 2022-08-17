@@ -816,6 +816,7 @@ version = "0.0.1"
 dependencies = [
  "autocxx",
  "autocxx-build",
+ "cfg-if",
  "cxx",
  "macropol",
  "memoffset",
