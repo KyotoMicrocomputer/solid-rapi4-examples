@@ -14,11 +14,7 @@ use std::{
     ptr::{null_mut, NonNull},
 };
 
-use crate::{
-    abi, interrupt,
-    thread::CpuCx,
-    utils::{abort_on_unwind, may_be_interrupt_context},
-};
+use crate::{abi, exceptions, interrupt, thread::CpuCx, utils::abort_on_unwind};
 
 /// A SOLID-OS tick count.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -93,7 +89,10 @@ impl fmt::Debug for Nsecs32 {
 ///
 /// # Processor states
 ///
-/// The handler is called in an interrupt context with interrupts enabled.
+/// The handler is called in an interrupt context
+/// ([`solid::exceptions::active`]`() == true`) with interrupts enabled.
+///
+/// [`solid::exceptions::active`]: crate::exceptions::active
 pub trait TimerHandler: Send + private::Sealed + 'static {
     /// Call the timer handler.
     ///
@@ -288,6 +287,8 @@ impl<T: TimerHandler> Timer<T> {
     /// The outer timer handler.
     unsafe extern "C" fn handler_trampoline(param: *mut u8, cpu_cx: *mut abi::SOLID_CPU_CONTEXT) {
         abort_on_unwind(|| {
+            debug_assert!(exceptions::active());
+
             // Safety: `param`'s value is taken from the corresponding timer's
             // `SOLID_TIMER_HANDLER::param`. `Self::start` derives this value by
             // casting `&Timer`. Since `start` takes a pinned receiver, user
@@ -435,7 +436,7 @@ impl<T: TimerHandler> Timer<T> {
         //   is no danger of data races. However, since we are essentially
         //   executing in the system timer handler, the previous bullet point
         //   applies to this case.
-        if may_be_interrupt_context() {
+        if exceptions::active() {
             return Err(TimerStopError::BadContext);
         }
 
