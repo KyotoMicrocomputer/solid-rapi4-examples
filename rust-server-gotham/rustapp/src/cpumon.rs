@@ -72,15 +72,10 @@ fn timer_handler(cx: CpuCx<'_>) {
     st.cursor
         .store(cursor.wrapping_add(1), atomic::Ordering::Relaxed);
 
-    let i = (cursor / usize::BITS as usize) % st.busy_history.len();
-    let mask = 1usize.rotate_left(cursor as u32);
+    let i = cursor % st.busy_history.len();
 
     // Record the busyness
     let mut bmp = st.busy_history[i].load(atomic::Ordering::Relaxed);
-    if taken_on_wfi {
-        bmp &= !mask;
-    } else {
-        bmp |= mask;
-    }
+    bmp = (bmp << 1) | (!taken_on_wfi as usize);
     st.busy_history[i].store(bmp, atomic::Ordering::Relaxed);
 }
