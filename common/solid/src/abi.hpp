@@ -30,3 +30,22 @@ static constexpr size_t _SOLID_RS_SOLID_INTC_HANDLER_OFFSET4 = offsetof(SOLID_IN
 static constexpr size_t _SOLID_RS_SOLID_INTC_HANDLER_SIZE = sizeof(SOLID_INTC_HANDLER);
 
 static constexpr size_t _SOLID_RS_SOLID_CORE_MAX = SOLID_CORE_MAX;
+
+#ifdef __aarch64__
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET0 = offsetof(SOLID_CPU_CONTEXT, xarm);
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET1 = offsetof(SOLID_CPU_CONTEXT, sp);
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET2 = offsetof(SOLID_CPU_CONTEXT, pc);
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET3 = offsetof(SOLID_CPU_CONTEXT, pstate);
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET4 = offsetof(SOLID_CPU_CONTEXT, spsel);
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET5 = offsetof(SOLID_CPU_CONTEXT, pNest);
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_OFFSET6 = offsetof(SOLID_CPU_CONTEXT, pFPU);
+#endif
+static constexpr size_t _SOLID_RS_SOLID_CPU_CONTEXT_SIZE = sizeof(SOLID_CPU_CONTEXT);
+
+#ifdef __aarch64__
+static constexpr size_t _SOLID_RS_SOLID_FPU_CONTEXT_OFFSET0 = offsetof(SOLID_FPU_CONTEXT, vfpregs);
+static constexpr size_t _SOLID_RS_SOLID_FPU_CONTEXT_OFFSET1 = offsetof(SOLID_FPU_CONTEXT, fpcr);
+static constexpr size_t _SOLID_RS_SOLID_FPU_CONTEXT_OFFSET2 = offsetof(SOLID_FPU_CONTEXT, fpsr);
+static constexpr size_t _SOLID_RS_SOLID_FPU_CONTEXT_OFFSET3 = offsetof(SOLID_FPU_CONTEXT, cpacr);
+#endif
+static constexpr size_t _SOLID_RS_SOLID_FPU_CONTEXT_SIZE = sizeof(SOLID_FPU_CONTEXT);

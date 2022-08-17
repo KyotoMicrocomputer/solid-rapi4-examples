@@ -12,6 +12,8 @@ include_cpp! {
     extern_cpp_opaque_type!("SOLID_INTC_HANDLER", super::SOLID_INTC_HANDLER)
     extern_cpp_opaque_type!("SOLID_VECTOR_HANDLER", super::SOLID_VECTOR_HANDLER)
     extern_cpp_opaque_type!("SOLID_SVC_HANDLER", super::SOLID_SVC_HANDLER)
+    extern_cpp_opaque_type!("SOLID_CPU_CONTEXT", super::SOLID_CPU_CONTEXT)
+    extern_cpp_opaque_type!("SOLID_FPU_CONTEXT", super::SOLID_FPU_CONTEXT)
 
     generate!("SOLID_MEM_Alloc")
     generate!("SOLID_MEM_AllocFlat")
@@ -163,6 +165,7 @@ include_cpp! {
     generate!("SOLID_CPU_CONTEXT")
     generate!("SOLID_REGISTER")
     generate!("SOLID_ADDRESS")
+    generate!("SOLID_VFP_REGS_MAX")
 
     // TODO: Make these `pub(crate)`
     generate!("_SOLID_RS_SOLID_TIMER_EACHCPU")
@@ -181,6 +184,19 @@ include_cpp! {
     generate!("_SOLID_RS_SOLID_INTC_HANDLER_OFFSET4")
     generate!("_SOLID_RS_SOLID_INTC_HANDLER_SIZE")
     generate!("_SOLID_RS_SOLID_CORE_MAX")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET0")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET1")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET2")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET3")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET4")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET5")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET6")
+    generate!("_SOLID_RS_SOLID_CPU_CONTEXT_SIZE")
+    generate!("_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET0")
+    generate!("_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET1")
+    generate!("_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET2")
+    generate!("_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET3")
+    generate!("_SOLID_RS_SOLID_FPU_CONTEXT_SIZE")
 }
 
 #[cxx::bridge]
@@ -229,6 +245,30 @@ mod ffi2 {
     }
 }
 
+#[cfg(target_arch = "aarch64")]
+mod ffi3 {
+    pub use x::*;
+    #[cxx::bridge]
+    mod x {
+        pub struct SOLID_CPU_CONTEXT {
+            pub xarm: [usize; 31],
+            pub sp: usize,
+            pub pc: usize,
+            pub pstate: u32,
+            pub spsel: u32,
+            pub pNest: *mut SOLID_CPU_CONTEXT,
+            pub pFPU: *mut SOLID_FPU_CONTEXT,
+        }
+
+        pub struct SOLID_FPU_CONTEXT {
+            pub vfpregs: [u64; 64],
+            pub fpcr: u32,
+            pub fpsr: u32,
+            pub cpacr: u32,
+        }
+    }
+}
+
 /// Layout check of `SOLID_TIMER_HANDLER`
 const _: () = {
     assert!(_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET0 == offset_of!(SOLID_TIMER_HANDLER, pNext));
@@ -251,7 +291,34 @@ const _: () = {
     assert!(_SOLID_RS_SOLID_INTC_HANDLER_SIZE == size_of::<SOLID_INTC_HANDLER>());
 };
 
-pub use self::{ffi::*, ffi2::*};
+// Layout check of `SOLID_CPU_CONTEXT`
+const _: () = {
+    #[cfg(target_arch = "aarch64")]
+    {
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET0 == offset_of!(SOLID_CPU_CONTEXT, xarm));
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET1 == offset_of!(SOLID_CPU_CONTEXT, sp));
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET2 == offset_of!(SOLID_CPU_CONTEXT, pc));
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET3 == offset_of!(SOLID_CPU_CONTEXT, pstate));
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET4 == offset_of!(SOLID_CPU_CONTEXT, spsel));
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET5 == offset_of!(SOLID_CPU_CONTEXT, pNest));
+        assert!(_SOLID_RS_SOLID_CPU_CONTEXT_OFFSET6 == offset_of!(SOLID_CPU_CONTEXT, pFPU));
+    }
+    assert!(_SOLID_RS_SOLID_CPU_CONTEXT_SIZE == size_of::<SOLID_CPU_CONTEXT>());
+};
+
+// Layout check of `SOLID_FPU_CONTEXT`
+const _: () = {
+    #[cfg(target_arch = "aarch64")]
+    {
+        assert!(_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET0 == offset_of!(SOLID_FPU_CONTEXT, vfpregs));
+        assert!(_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET1 == offset_of!(SOLID_FPU_CONTEXT, fpcr));
+        assert!(_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET2 == offset_of!(SOLID_FPU_CONTEXT, fpsr));
+        assert!(_SOLID_RS_SOLID_FPU_CONTEXT_OFFSET3 == offset_of!(SOLID_FPU_CONTEXT, cpacr));
+    }
+    assert!(_SOLID_RS_SOLID_FPU_CONTEXT_SIZE == size_of::<SOLID_FPU_CONTEXT>());
+};
+
+pub use self::{ffi::*, ffi2::*, ffi3::*};
 pub use autocxx::c_int;
 pub use core::ffi::c_void;
 
