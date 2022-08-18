@@ -378,6 +378,8 @@ impl<T: HandlerFn> Handler<T> {
             //   code assumption.
             // - `_line_guard` protects us against dead races on `m_pHandler`.
             // - `inner.param` is initialized properly.
+            // - `inner` is writable by the system. We uphold this by taking a
+            //   mutable reference to `Self`.
             // - External code assumption: External code does not cause racy
             //   memory accesses by making conflicting `SOLID_INTC_Register`
             //   calls.
