@@ -1,0 +1,31 @@
+[package]
+name = "rustapp"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+env_logger = "0.9"
+log = "0.4"
+rocket = "= 0.5.0-rc.2"
+itron = { version = "0.1.7", features = ["unstable", "nightly", "solid_fmp3", "dcre"] }
+tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
+
+solid.path = "../../common/solid"
+solid.features = ["std"]
+
+# Replace some dependencies with forks with SOLID support
+[patch.crates-io]
+hyper = { git = "https://github.com/solid-rs/hyper", branch = "solid-rs/0.14.x" }
+mio = { git = "https://github.com/solid-rs/mio", branch = "solid-rs/0.7.x" }
+socket2 = { git = "https://github.com/solid-rs/socket2", branch = "solid-rs/0.4.x" }
+tokio = { git = "https://github.com/solid-rs/tokio", branch = "solid-rs/1.x" }
+atty = { git = "https://github.com/solid-rs/atty", branch = "solid-rs/0.2.x" }
+rocket = { git = "https://github.com/solid-rs/rocket", branch = "solid-rs/0.5.x" }
+
+# Enable optimization for all dependencies regardless of build configuration
+[profile.dev.package."*"]
+opt-level = 1

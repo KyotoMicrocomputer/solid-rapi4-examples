@@ -12,4 +12,5 @@
 - **[rust-blinky-pac-tokio](./rust-blinky-pac-tokio)**: [Tokio非同期ランタイム](https://tokio.rs)と[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
 - **[rust-blinky-raw-rtos](./rust-blinky-raw-rtos)**: FFI宣言とRTOS APIを使用したLチカ
 - **[rust-server-gotham](./rust-server-gotham)**: [Gotham Webフレームワーク](https://gotham.rs/)ベースのHTTPサーバー
+- **[rust-server-rocket](./rust-server-rocket)**: [Rocket Webフレームワーク](https://rocket.rs/)ベースのHTTPサーバー
 
