@@ -21,14 +21,15 @@ extern "C" fn rust_entry() {
 
     // Start Rayon worker threads
     rayon::ThreadPoolBuilder::new()
-        .num_threads(processors::len())
+        .num_threads(solid::abi::SOLID_CORE_MAX)
         .start_handler(|i| {
             #[cfg(target_os = "solid_asp3")]
             {
                 let task = itron::task::current().unwrap();
                 let task = task.as_ref();
 
-                task.migrate(processors::processor_at(i)).unwrap();
+                task.migrate(itron::processor::Processor::from_raw(i as i32 + 1).unwrap())
+                    .unwrap();
 
                 // Lower the task priority
                 task.set_priority(task.priority().unwrap() + 1).unwrap();
@@ -39,7 +40,7 @@ extern "C" fn rust_entry() {
 
     // Initialize Tokio
     let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(processors::len())
+        .worker_threads(solid::abi::SOLID_CORE_MAX)
         .thread_name("tokio worker")
         .on_thread_start(|| {
             #[cfg(target_os = "solid_asp3")]
@@ -48,11 +49,11 @@ extern "C" fn rust_entry() {
                 use std::sync::atomic::{AtomicUsize, Ordering};
                 static TID: AtomicUsize = AtomicUsize::new(0);
                 let thread_index = TID.fetch_add(1, Ordering::Relaxed);
-                let i = thread_index % processors::len();
+                let i = thread_index % solid::abi::SOLID_CORE_MAX;
                 itron::task::current()
                     .unwrap()
                     .as_ref()
-                    .migrate(processors::processor_at(i))
+                    .migrate(itron::processor::Processor::from_raw(i as i32 + 1).unwrap())
                     .unwrap();
             }
         })
@@ -294,23 +295,4 @@ fn render_mandelbrot_set(vp_x: f32, vp_y: f32, vp_r: f32) -> (Vec<u8>, f64) {
     j.write_image(&imgbuf, IMGDIM as _, IMGDIM as _, image::ColorType::Bgra8)
         .unwrap();
     (encoded, elapsed)
-}
-
-// ----------------------------------------------------------------------------
-//                                Miscellaneous
-// ----------------------------------------------------------------------------
-
-mod processors {
-    /// Get the number of hardware threads.
-    #[inline]
-    pub fn len() -> usize {
-        2
-    }
-
-    /// Get the [`itron::processor::Processor`] corresponding to the specified hardware thread.
-    #[inline]
-    pub fn processor_at(i: usize) -> itron::processor::Processor {
-        debug_assert!(i < len());
-        (i + 1).try_into().unwrap()
-    }
 }
