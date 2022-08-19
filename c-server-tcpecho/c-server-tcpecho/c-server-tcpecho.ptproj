@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|KMC_SOLID_RPI4">
+      <Configuration>Debug</Configuration>
+      <Platform>KMC_SOLID_RPI4</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|KMC_SOLID_RPI4">
+      <Configuration>Release</Configuration>
+      <Platform>KMC_SOLID_RPI4</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{adc2b765-a4d7-41a0-9256-76b3ae9690ce}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(KMCTargetsPath)\KMC.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|KMC_SOLID_RPI4'" Label="Configuration">
+    <ConfigurationType>LoadableApplication</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|KMC_SOLID_RPI4'" Label="Configuration">
+    <ConfigurationType>LoadableApplication</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(KMCTargetsPath)\KMC.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SolutionDir)$(SolutionName).props" Condition="exists('$(SolutionDir)$(SolutionName).props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|KMC_SOLID_RPI4'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\KMC.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\KMC.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|KMC_SOLID_RPI4'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\KMC.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\KMC.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|KMC_SOLID_RPI4'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|KMC_SOLID_RPI4'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|KMC_SOLID_RPI4'">
+    <ClCompile>
+      <exeClang_Optimization>O0</exeClang_Optimization>
+    </ClCompile>
+    <SolidELF>
+      <ImportSymbolListFiles>$(ProjectDir)APP_IMP.txt;%(ImportSymbolListFiles)</ImportSymbolListFiles>
+      <ExportSymbolListFiles>$(ProjectDir)APP_EXP.txt;%(ExportSymbolListFiles)</ExportSymbolListFiles>
+    </SolidELF>
+    <Link>
+      <exeClang_Command>clang++</exeClang_Command>
+      <exeGCC_AdditionalLibraryDirectories>$(OutDir);%(exeGCC_AdditionalLibraryDirectories)</exeGCC_AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|KMC_SOLID_RPI4'">
+    <ClCompile>
+      <exeClang_Optimization>O2</exeClang_Optimization>
+    </ClCompile>
+    <SolidELF>
+      <ImportSymbolListFiles>$(ProjectDir)APP_IMP.txt;%(ImportSymbolListFiles)</ImportSymbolListFiles>
+      <ExportSymbolListFiles>$(ProjectDir)APP_EXP.txt;%(ExportSymbolListFiles)</ExportSymbolListFiles>
+    </SolidELF>
+    <Link>
+      <exeClang_Command>clang++</exeClang_Command>
+      <exeGCC_AdditionalLibraryDirectories>$(OutDir);%(exeGCC_AdditionalLibraryDirectories)</exeGCC_AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="APP_EXP.txt" />
+    <Text Include="APP_IMP.txt" />
+  </ItemGroup>
+  <Import Project="$(KMCTargetsPath)\KMC.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
