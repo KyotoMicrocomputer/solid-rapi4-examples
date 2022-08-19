@@ -6,7 +6,7 @@ UDPポート52000にパケットを送ることで点滅周期を変更できま
 
 ```
 PowerShell:
-PS1> ./Set-Blinky-Period.ps1 192.168.1.23 50000
+PS> ./Set-Blinky-Period.ps1 192.168.1.23 50000
 
 POSIX shell + Socat:
 $ echo 50000 | socat - udp:192.168.1.23:52000
