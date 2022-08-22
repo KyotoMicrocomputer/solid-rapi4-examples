@@ -11,5 +11,3 @@ $ echo test | socat - tcp:192.168.1.23:7777
 ```
 
 主要なコードは[`c-server-tcpecho/main.cpp`](./c-server-tcpecho/main.cpp)にあります。
-
-[1]: http://solid.kmckk.com/doc/skit/current/os/cs/timer.html
