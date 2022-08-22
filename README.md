@@ -15,4 +15,5 @@
 - **[rust-server-gotham](./rust-server-gotham)**: [Gotham Webフレームワーク](https://gotham.rs/)ベースのHTTPサーバー
 - **[rust-server-rocket](./rust-server-rocket)**: [Rocket Webフレームワーク](https://rocket.rs/)ベースのHTTPサーバー
 - **[rust-server-tcpecho-std](./rust-server-tcpecho-std)**: Rust標準ライブラリを使用したTCP echoサーバー
+- **[rust-server-tcpecho-tokio](./rust-server-tcpecho-tokio)**: [Tokio非同期ランタイム](https://tokio.rs)を使用したTCP echoサーバー
 

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# PARTNER-IDE 1
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9CB6BABF-FFDD-4757-BAF4-5C11230D6845}") = "rust-server-tcpecho-tokio", "rust-server-tcpecho-tokio\rust-server-tcpecho-tokio.ptproj", "{E074623E-3EFF-440C-9663-CFDDF1FEDA33}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C1E67A2-4733-4CDE-AFB4-087840BA9F3F} = {9C1E67A2-4733-4CDE-AFB4-087840BA9F3F}
+	EndProjectSection
+EndProject
+Project("{382EF985-E73F-4446-9C00-02051587D32D}") = "rustapp", "rustapp\rustapp.ptrsproj", "{9C1E67A2-4733-4CDE-AFB4-087840BA9F3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|KMC_SOLID_RPI4 = Debug|KMC_SOLID_RPI4
+		Release|KMC_SOLID_RPI4 = Release|KMC_SOLID_RPI4
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E074623E-3EFF-440C-9663-CFDDF1FEDA33}.Debug|KMC_SOLID_RPI4.ActiveCfg = Debug|KMC_SOLID_RPI4
+		{E074623E-3EFF-440C-9663-CFDDF1FEDA33}.Debug|KMC_SOLID_RPI4.Build.0 = Debug|KMC_SOLID_RPI4
+		{E074623E-3EFF-440C-9663-CFDDF1FEDA33}.Release|KMC_SOLID_RPI4.ActiveCfg = Release|KMC_SOLID_RPI4
+		{E074623E-3EFF-440C-9663-CFDDF1FEDA33}.Release|KMC_SOLID_RPI4.Build.0 = Release|KMC_SOLID_RPI4
+		{9C1E67A2-4733-4CDE-AFB4-087840BA9F3F}.Debug|KMC_SOLID_RPI4.ActiveCfg = Debug|KMC_SOLID_RPI4
+		{9C1E67A2-4733-4CDE-AFB4-087840BA9F3F}.Debug|KMC_SOLID_RPI4.Build.0 = Debug|KMC_SOLID_RPI4
+		{9C1E67A2-4733-4CDE-AFB4-087840BA9F3F}.Release|KMC_SOLID_RPI4.ActiveCfg = Release|KMC_SOLID_RPI4
+		{9C1E67A2-4733-4CDE-AFB4-087840BA9F3F}.Release|KMC_SOLID_RPI4.Build.0 = Release|KMC_SOLID_RPI4
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
