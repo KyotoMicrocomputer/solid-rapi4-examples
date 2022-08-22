@@ -1,0 +1,15 @@
+[package]
+name = "rustapp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = { version = "0.9", default-features = false }
+log = "0.4"
+
+[lib]
+crate-type = ["staticlib"]
+
+# Enable optimization for all dependencies regardless of build configuration
+[profile.dev.package."*"]
+opt-level = 1

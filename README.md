@@ -14,4 +14,5 @@
 - **[rust-blinky-raw-rtos](./rust-blinky-raw-rtos)**: FFI宣言とRTOS APIを使用したLチカ
 - **[rust-server-gotham](./rust-server-gotham)**: [Gotham Webフレームワーク](https://gotham.rs/)ベースのHTTPサーバー
 - **[rust-server-rocket](./rust-server-rocket)**: [Rocket Webフレームワーク](https://rocket.rs/)ベースのHTTPサーバー
+- **[rust-server-tcpecho-std](./rust-server-tcpecho-std)**: Rust標準ライブラリを使用したTCP echoサーバー
 
