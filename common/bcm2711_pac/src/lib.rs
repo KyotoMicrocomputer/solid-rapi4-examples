@@ -14,3 +14,4 @@ pub mod pcm;
 pub mod pl011;
 pub mod pwm;
 pub mod spi;
+pub mod sys_timer;
