@@ -1,8 +1,8 @@
-# c-blinky-cs
+# cpp-blinky-cs
 
 基板上のLEDを点滅させます。遅延を発生させるためにSOLID Core Service[タイマAPI][1]を使用します。
 
-主要なコードは[`c-blinky-cs/main.cpp`](./c-blinky-cs/main.cpp)にあります。
+主要なコードは[`cpp-blinky-cs/main.cpp`](./cpp-blinky-cs/main.cpp)にあります。
 
 ## 準備
 

@@ -4,9 +4,9 @@
 
 ### Blinky (Lチカ)
 
-- **[c-blinky-ap804](./c-blinky-ap804)**: AP804ハードウェアタイマーを使用したLチカ
-- **[c-blinky-cs](./c-blinky-cs)**: SOLID-OSタイマAPIを使用したLチカ
-- **[c-blinky-rtos](./c-blinky-rtos)**: RTOS APIを使用したLチカ
+- **[cpp-blinky-ap804](./cpp-blinky-ap804)**: AP804ハードウェアタイマーを使用したLチカ
+- **[cpp-blinky-cs](./cpp-blinky-cs)**: SOLID-OSタイマAPIを使用したLチカ
+- **[cpp-blinky-rtos](./cpp-blinky-rtos)**: RTOS APIを使用したLチカ
 - **[rust-blinky-pac-ap804](./rust-blinky-pac-ap804)**: AP804ハードウェアタイマーと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
 - **[rust-blinky-pac-cs](./rust-blinky-pac-cs)**: SOLID-OSタイマAPIと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
 - **[rust-blinky-pac-rtos](./rust-blinky-pac-rtos)**: RTOS APIと[peripheral access crate](./common/bcm2711_pac)を使用したLチカ
@@ -16,7 +16,7 @@
 
 ### ネットワークサーバー
 
-- **[c-server-tcpecho](./c-server-tcpecho)**: TCP echoサーバー
+- **[cpp-server-tcpecho](./cpp-server-tcpecho)**: TCP echoサーバー
 - **[rust-server-gotham](./rust-server-gotham)**: [Gotham Webフレームワーク](https://gotham.rs/)ベースのHTTPサーバー
 - **[rust-server-rocket](./rust-server-rocket)**: [Rocket Webフレームワーク](https://rocket.rs/)ベースのHTTPサーバー
 - **[rust-server-tcpecho-std](./rust-server-tcpecho-std)**: Rust標準ライブラリを使用したTCP echoサーバー

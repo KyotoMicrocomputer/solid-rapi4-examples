@@ -1,8 +1,8 @@
-# c-blinky-rtos
+# cpp-blinky-rtos
 
 基板上のLEDを点滅させます。遅延を発生させるためにTOPPERSカーネル関数 [`dly_tsk`][1] を使用します。
 
-主要なコードは[`c-blinky-rtos/main.cpp`](./c-blinky-rtos/main.cpp)にあります。
+主要なコードは[`cpp-blinky-rtos/main.cpp`](./cpp-blinky-rtos/main.cpp)にあります。
 
 ## 準備
 

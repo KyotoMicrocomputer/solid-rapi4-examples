@@ -2,7 +2,7 @@
 
 基板上のLEDを点滅させます。遅延を発生させるためにTOPPERSカーネル関数 [`dly_tsk`][1] を [`extern` ブロック][2]で宣言して使用します。他の rust-blinky-\* サンプルとは異なり、このクレート単体で完結していますが、その代わりアプリケーションコードで多くの `unsafe` 操作が必要になります。
 
-主要なコードは[`rustapp/src/lib.rs`](./rustapp/src/lib.rs)にあります。[c-blinky-rtos](../c-blinky-rtos/c-blinky-rtos/main.cpp) (同等のC++コード) や [rust-blinky-pac-std](../rust-blinky-pac-std/rustapp/src/lib.rs) (安全なラッパーを使用したRustコード) と比べてみてください。
+主要なコードは[`rustapp/src/lib.rs`](./rustapp/src/lib.rs)にあります。[cpp-blinky-rtos](../cpp-blinky-rtos/cpp-blinky-rtos/main.cpp) (同等のC++コード) や [rust-blinky-pac-std](../rust-blinky-pac-std/rustapp/src/lib.rs) (安全なラッパーを使用したRustコード) と比べてみてください。
 
 ## 準備
 

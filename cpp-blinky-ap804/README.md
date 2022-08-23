@@ -1,8 +1,8 @@
-# c-blinky-ap804
+# cpp-blinky-ap804
 
 基板上のLEDを点滅させます。遅延を発生させるためにBCM2711のペリフェラルの一つである[Arm AP804タイマー][1]を使用します。
 
-主要なコードは[`c-blinky-ap804/main.cpp`](./c-blinky-ap804/main.cpp)にあります。
+主要なコードは[`cpp-blinky-ap804/main.cpp`](./cpp-blinky-ap804/main.cpp)にあります。
 
 ## 準備
 

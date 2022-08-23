@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # PARTNER-IDE 1
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9CB6BABF-FFDD-4757-BAF4-5C11230D6845}") = "c-server-tcpecho", "c-server-tcpecho\c-server-tcpecho.ptproj", "{ADC2B765-A4D7-41A0-9256-76B3AE9690CE}"
+Project("{9CB6BABF-FFDD-4757-BAF4-5C11230D6845}") = "cpp-blinky-ap804", "cpp-blinky-ap804\cpp-blinky-ap804.ptproj", "{ADC2B765-A4D7-41A0-9256-76B3AE9690CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
