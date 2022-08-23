@@ -7,4 +7,5 @@ pub mod gpio;
 pub mod mbox;
 pub mod pcm;
 pub mod pl011;
+pub mod pwm;
 pub mod spi;
