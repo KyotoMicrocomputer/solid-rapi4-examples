@@ -1,4 +1,4 @@
-# rust-blinky-pac-std
+# rust-blinky-pac-cs
 
 基板上のLEDを点滅させます。遅延を発生させるためにSOLID Core Service[タイマAPI][1]を[ラッパーライブラリ](../common/solid)を経由して使用します。GPIOレジスタの操作に[peripheral access crate](../common/bcm2711_pac)を使用します。
 
