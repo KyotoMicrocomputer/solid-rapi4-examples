@@ -4,6 +4,7 @@
 
 ### Blinky (Lチカ)
 
+- **[c-blinky-rtos](./c-blinky-rtos)**: RTOS APIを使用したLチカ
 - **[cpp-blinky-ap804](./cpp-blinky-ap804)**: AP804ハードウェアタイマーを使用したLチカ
 - **[cpp-blinky-cs](./cpp-blinky-cs)**: SOLID-OSタイマAPIを使用したLチカ
 - **[cpp-blinky-rtos](./cpp-blinky-rtos)**: RTOS APIを使用したLチカ
