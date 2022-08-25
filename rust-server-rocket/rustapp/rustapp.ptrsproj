@@ -35,8 +35,5 @@
     <Compile Include="src\lib.rs" />
     <Compile Include="src\stubs.rs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="static\index.html" />
-  </ItemGroup>
   <Import Project="$(KMCRustTargetsPath)\KMC.Rust.targets" />
 </Project>
