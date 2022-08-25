@@ -3,7 +3,7 @@ use std::time::Duration;
 use tokio::{net::UdpSocket, time::sleep};
 
 #[no_mangle]
-pub extern "C" fn rust_entry() {
+pub extern "C" fn slo_main() {
     println!("Starting LED blinker");
 
     // Initialize Tokio

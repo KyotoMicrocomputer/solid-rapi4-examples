@@ -4,9 +4,9 @@
 #[cfg(target_os = "solid_asp3")]
 mod stubs;
 
-/// Called by the main task entry point defined in `main.cpp`
+/// The root task entry point
 #[no_mangle]
-extern "C" fn rust_entry() {
+extern "C" fn slo_main() {
     std::panic::resume_unwind(
         std::thread::Builder::new()
             // Rocket's startup code is very stack-heavy

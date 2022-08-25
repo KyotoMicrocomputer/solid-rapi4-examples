@@ -1,5 +1,5 @@
 ﻿#[no_mangle]
-pub extern "C" fn rust_entry() {
+pub extern "C" fn slo_main() {
     println!("Starting LED blinker");
 
     // Configure the LED port

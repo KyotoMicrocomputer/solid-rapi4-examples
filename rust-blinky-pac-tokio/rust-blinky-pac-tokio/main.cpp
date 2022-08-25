@@ -1,5 +1,2 @@
-﻿extern "C" void rust_entry();
-extern "C" void slo_main()
-{
-    rust_entry();
-}
+﻿// This source file is intentionally left blank. See 'rustapp/src/lib.rs' for
+// this application's entry point

@@ -6,9 +6,9 @@ mod cpumon;
 #[cfg(target_os = "solid_asp3")]
 mod stubs;
 
-/// The entry point of the Rust portion of this application
+/// The root task entry point
 #[no_mangle]
-extern "C" fn rust_entry() {
+extern "C" fn slo_main() {
     // Register a logger
     env_logger::Builder::new()
         .filter_level(log::LevelFilter::Info)

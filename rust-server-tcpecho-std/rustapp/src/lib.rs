@@ -12,7 +12,7 @@ const NUM_WORKERS: usize = 8;
 
 /// The root task entry point.
 #[no_mangle]
-pub extern "C" fn rust_entry() {
+pub extern "C" fn slo_main() {
     // Register a logger for use by `log::*` macros
     env_logger::Builder::new()
         .filter_level(log::LevelFilter::Info)

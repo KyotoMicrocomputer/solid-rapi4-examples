@@ -1,5 +1,5 @@
 ﻿#[no_mangle]
-pub extern "C" fn rust_entry() {
+pub extern "C" fn slo_main() {
     unsafe { ffi::SOLID_LOG_printf(b"Starting LED blinker\n\0".as_ptr().cast()) };
 
     // Configure the LED port
