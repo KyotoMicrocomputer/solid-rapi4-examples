@@ -12,6 +12,7 @@ impl Vpa {
     /// let gpio = Vpa(0x4_7e20_0000);
     /// assert_eq!(gpio.to_arm_pa(), Some(0xfe20_0000));
     /// ```
+    #[inline]
     pub const fn to_arm_pa(self) -> Option<u64> {
         match self.0 {
             0x4_7c00_0000..=0x4_7fff_ffff => Some(self.0 - 0x4_7c00_0000 + 0xfc00_0000),
