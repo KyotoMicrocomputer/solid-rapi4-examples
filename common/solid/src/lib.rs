@@ -8,6 +8,7 @@
 compile_error!("feature `std` is currently required due to `autocxx`'s requirements");
 
 pub mod abi;
+pub mod closure;
 pub mod error;
 pub mod exceptions;
 pub mod fs;

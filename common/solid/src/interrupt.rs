@@ -20,7 +20,7 @@ use core::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-use crate::{abi, smp, thread::CpuCx, utils::abort_on_unwind};
+use crate::{abi, closure::FuncMut, smp, thread::CpuCx, utils::abort_on_unwind};
 
 pub struct CriticalSection(());
 
@@ -88,15 +88,18 @@ pub trait HandlerFn: Send + private::Sealed + 'static {
 
 /// The implementation of `HandlerFn` for closures.
 ///
-/// `Unpin`: `FnMut` requires an unpinned receiver.
-impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> HandlerFn for T {
+/// `Unpin`: `FuncMut` requires an unpinned receiver.
+impl<T> HandlerFn for T
+where
+    T: for<'a> FuncMut<(CpuCx<'a>,), Output = ()> + Unpin + Send + 'static,
+{
     #[inline]
     unsafe fn call(mut self: Pin<&mut Self>, cx: CpuCx<'_>) {
         // Re-enable interrupts.
         // Safety: We are not inside a SOLID critical section.
         unsafe { enable() };
 
-        (*self)(cx);
+        FuncMut::call(&mut *self, (cx,));
     }
 }
 
@@ -115,7 +118,7 @@ mod private {
     /// Sealed trait pattern (prevents external implementations of
     /// `HandlerFn`)
     pub trait Sealed {}
-    impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> Sealed for T {}
+    impl<T> Sealed for T where T: for<'a> FuncMut<(CpuCx<'a>,), Output = ()> + Unpin + Send + 'static {}
     impl<T: HandlerFn> Sealed for Option<T> {}
 }
 

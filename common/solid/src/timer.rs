@@ -14,7 +14,7 @@ use std::{
     ptr::{null_mut, NonNull},
 };
 
-use crate::{abi, exceptions, interrupt, thread::CpuCx, utils::abort_on_unwind};
+use crate::{abi, closure::FuncMut, exceptions, interrupt, thread::CpuCx, utils::abort_on_unwind};
 
 /// A SOLID-OS tick count.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -105,8 +105,11 @@ pub trait TimerHandler: Send + private::Sealed + 'static {
 
 /// The implementation of `TimerHandler` for closures.
 ///
-/// `Unpin`: `FnMut` requires an unpinned receiver.
-impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> TimerHandler for T {
+/// `Unpin`: `FuncMut` requires an unpinned receiver.
+impl<T> TimerHandler for T
+where
+    T: for<'a> FuncMut<(CpuCx<'a>,), Output = ()> + Unpin + Send + 'static,
+{
     #[inline]
     unsafe fn call(mut self: Pin<&mut Self>, cx: CpuCx<'_>) {
         struct Guard;
@@ -124,7 +127,7 @@ impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> TimerHandler for T {
         unsafe { interrupt::enable() };
         let _guard = Guard;
 
-        (*self)(cx);
+        FuncMut::call(&mut *self, (cx,));
     }
 }
 
@@ -143,7 +146,7 @@ mod private {
     /// Sealed trait pattern (prevents external implementations of
     /// `TimerHandler`)
     pub trait Sealed {}
-    impl<T: FnMut(CpuCx<'_>) + Unpin + Send + 'static> Sealed for T {}
+    impl<T> Sealed for T where T: for<'a> FuncMut<(CpuCx<'a>,), Output = ()> + Unpin + Send + 'static {}
     impl<T: TimerHandler> Sealed for Option<T> {}
 }
 
