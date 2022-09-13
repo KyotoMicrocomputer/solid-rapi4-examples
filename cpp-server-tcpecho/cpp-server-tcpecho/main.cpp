@@ -128,7 +128,7 @@ void worker_task(intptr_t exinf)
 /** The root task entry point */
 extern "C" void slo_main()
 {
-    // The bitmask for specify all workers
+    // The bitmask to specify all workers
     const FLGPTN all_workers_mask = NUM_WORKERS == std::numeric_limits<FLGPTN>::digits
         ? ~FLGPTN(0) : (FLGPTN(1) << NUM_WORKERS) - 1;
 
