@@ -25,6 +25,8 @@ rayon = "1.5.1"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
 takecell = "0.1.1"
+futures = "0.3"
+bytes = "1"
 
 solid.path = "../../common/solid"
 solid.features = ["std"]

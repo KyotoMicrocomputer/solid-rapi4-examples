@@ -113,6 +113,12 @@ fn router() -> gotham::router::Router {
             .get("/v0/fetch/*")
             .with_path_extractor::<FetchParams>()
             .to(handle_fetch);
+
+        // `/v0/fs/:url`: Serve files in `/var/www/solid-example`
+        route
+            .get("/v0/fs/*")
+            .with_path_extractor::<FilePathExtractor>()
+            .to_new_handler(DirHandler);
     })
 }
 
@@ -120,14 +126,22 @@ fn router() -> gotham::router::Router {
 //                              Request Handlers
 // ----------------------------------------------------------------------------
 
+use bytes::{Bytes, BytesMut};
+use futures::{
+    future::FutureExt,
+    stream::{TryStream, TryStreamExt},
+};
 use gotham::{
-    handler::IntoResponse,
+    anyhow::{Context, Result},
+    handler::{HandlerError, IntoHandlerFuture, IntoResponse},
     helpers::http::response::create_response,
     state::{FromState, State},
 };
 use gotham_derive::{StateData, StaticResponseExtender};
 use http::HeaderValue;
 use serde::Deserialize;
+use std::{io, path::PathBuf, pin::Pin};
+use tokio::{fs::File, io::AsyncReadExt};
 
 fn static_handler(
     mime: &'static mime::Mime,
@@ -295,4 +309,97 @@ fn render_mandelbrot_set(vp_x: f32, vp_y: f32, vp_r: f32) -> (Vec<u8>, f64) {
     j.write_image(&imgbuf, IMGDIM as _, IMGDIM as _, image::ColorType::Bgra8)
         .unwrap();
     (encoded, elapsed)
+}
+
+#[derive(Deserialize, StateData, StaticResponseExtender)]
+struct FilePathExtractor {
+    #[serde(rename = "*")]
+    parts: Vec<String>,
+}
+
+#[derive(Copy, Clone)]
+struct DirHandler;
+
+impl gotham::handler::NewHandler for DirHandler {
+    type Instance = Self;
+    fn new_handler(&self) -> Result<Self::Instance> {
+        Ok(*self)
+    }
+}
+
+impl gotham::handler::Handler for DirHandler {
+    fn handle(self, mut state: State) -> Pin<Box<gotham::handler::HandlerFuture>> {
+        let FilePathExtractor { parts, .. } = FilePathExtractor::borrow_from(&mut state);
+
+        // Deny access to a location outside the document root
+        if parts.iter().any(|e| e.contains('\\') || e == "..") {
+            let response = gotham::helpers::http::response::create_empty_response(
+                &state,
+                StatusCode::BAD_REQUEST,
+            );
+            return (state, response).into_handler_future();
+        }
+
+        // Convert `parts` to a file path
+        let root = r"\OSCOM_FS\var\www\solid-example";
+        let file_path: PathBuf = std::iter::once(root)
+            .chain(parts.iter().map(String::as_str))
+            .collect();
+        log::debug!("Serving {:?}", file_path);
+
+        // Serve the file
+        create_file_response(file_path, state)
+    }
+}
+
+/// `gotham::handler::assets::create_file_response`, modified for SOLID-Rust
+fn create_file_response(path: PathBuf, state: State) -> Pin<Box<gotham::handler::HandlerFuture>> {
+    let response_future = async move {
+        let file = File::open(&path).await.context("Could not open the file")?;
+        let body = hyper::Body::wrap_stream(file_stream(file).into_stream());
+        let response = http::Response::builder()
+            .status(StatusCode::OK)
+            .header(hyper::header::CONTENT_TYPE, "application/x-octet-stream");
+
+        Ok(response.body(body).unwrap())
+    };
+
+    response_future
+        // If `response_future` resolves to `Err(_)`, try to convert it to
+        // the HTTP status code that most precisely describes the reason.
+        .map(|result: Result<_>| match result {
+            Ok(response) => Ok((state, response)),
+            Err(err) => {
+                let io_err: Option<&std::io::Error> = err.downcast_ref();
+                let status = match io_err.map(|e| e.kind()) {
+                    Some(io::ErrorKind::InvalidInput) => StatusCode::BAD_REQUEST,
+                    Some(io::ErrorKind::NotFound) => StatusCode::NOT_FOUND,
+                    Some(io::ErrorKind::PermissionDenied) => StatusCode::FORBIDDEN,
+                    _ => {
+                        log::debug!("Error while serving a file: {err:?}");
+                        StatusCode::INTERNAL_SERVER_ERROR
+                    }
+                };
+                let err: HandlerError = err.into();
+                Err((state, err.with_status(status)))
+            }
+        })
+        .boxed()
+}
+
+/// Read the contents of `f` as a stream of `Bytes`.
+fn file_stream(f: File) -> impl TryStream<Ok = Bytes, Error = io::Error> + Send {
+    futures::stream::try_unfold(
+        (f, BytesMut::with_capacity(8192)),
+        |(mut f, mut buf)| async {
+            f.read_buf(&mut buf).await?;
+            if buf.is_empty() {
+                return Ok(None);
+            }
+
+            let chunk = Bytes::copy_from_slice(&buf);
+            buf.clear();
+            Ok(Some((chunk, (f, buf))))
+        },
+    )
 }
