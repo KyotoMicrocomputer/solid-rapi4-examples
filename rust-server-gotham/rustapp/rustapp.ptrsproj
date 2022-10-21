@@ -34,7 +34,6 @@
   <ItemGroup>
     <Compile Include="src\cpumon.rs" />
     <Compile Include="src\lib.rs" />
-    <Compile Include="src\stubs.rs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="static\index.html" />

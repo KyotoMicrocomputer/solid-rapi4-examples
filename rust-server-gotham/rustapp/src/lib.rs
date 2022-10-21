@@ -3,8 +3,13 @@ use hyper::StatusCode;
 
 #[cfg(target_os = "solid_asp3")]
 mod cpumon;
+
 #[cfg(target_os = "solid_asp3")]
-mod stubs;
+solid::staticenv! {
+    // Increase the default stack size used by `std::thread::spawn`
+    // (Debug builds are stack-hungry)
+    "RUST_MIN_STACK" => "125536",
+}
 
 /// The root task entry point
 #[no_mangle]
