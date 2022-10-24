@@ -379,7 +379,7 @@ impl<T: HandlerFn> Handler<T> {
             //   handler executions on other processors, leading to UB.)
             //   External code is assumed to uphold this as per the external
             //   code assumption.
-            // - `_line_guard` protects us against dead races on `m_pHandler`.
+            // - `_line_guard` protects us against data races on `m_pHandler`.
             // - `inner.param` is initialized properly.
             // - `inner` is writable by the system. We uphold this by taking a
             //   mutable reference to `Self`.
