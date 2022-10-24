@@ -1,5 +1,4 @@
 ﻿#![deny(unsafe_op_in_unsafe_fn)]
-use hyper::StatusCode;
 
 #[cfg(target_os = "solid_asp3")]
 mod cpumon;
@@ -144,6 +143,7 @@ use gotham::{
 };
 use gotham_derive::{StateData, StaticResponseExtender};
 use http::HeaderValue;
+use hyper::StatusCode;
 use serde::Deserialize;
 use std::{io, path::PathBuf, pin::Pin};
 use tokio::{fs::File, io::AsyncReadExt};
