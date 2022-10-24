@@ -96,7 +96,7 @@ pub const fn str_table<const LEN: usize>(proto: ProtoEnvTable) -> [u8; LEN] {
         let mut i = 0;
         // Ranged indexing and `copy_from_slice` in `const fn` are unstable
         while i < k.len() {
-            assert!(k[i] != 0);
+            assert!(k[i] != 0, "name must not contain null bytes");
             out[out_i] = k[i];
             i += 1;
             out_i += 1;
@@ -110,7 +110,7 @@ pub const fn str_table<const LEN: usize>(proto: ProtoEnvTable) -> [u8; LEN] {
         let mut i = 0;
         // Ranged indexing and `copy_from_slice` in `const fn` are unstable
         while i < v.len() {
-            assert!(v[i] != 0);
+            assert!(v[i] != 0, "value must not contain null bytes");
             out[out_i] = v[i];
             i += 1;
             out_i += 1;
