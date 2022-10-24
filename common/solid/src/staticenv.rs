@@ -97,6 +97,7 @@ pub const fn str_table<const LEN: usize>(proto: ProtoEnvTable) -> [u8; LEN] {
         // Ranged indexing and `copy_from_slice` in `const fn` are unstable
         while i < k.len() {
             assert!(k[i] != 0, "name must not contain null bytes");
+            assert!(k[i] != b'=', "name must not contain equal signs");
             out[out_i] = k[i];
             i += 1;
             out_i += 1;
