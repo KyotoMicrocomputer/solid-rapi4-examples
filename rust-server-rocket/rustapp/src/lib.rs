@@ -1,5 +1,4 @@
 ﻿#![deny(unsafe_op_in_unsafe_fn)]
-#![feature(decl_macro)]
 
 #[cfg(target_os = "solid_asp3")]
 solid::staticenv! {
