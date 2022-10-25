@@ -374,10 +374,10 @@ impl<T: TimerHandler> Timer<T> {
             // Add `self.inner` to the system timer queue (`Timer::m_pQueue`).
             //
             // Safety:
-            // - The current processor is the same as the one where
-            //   `Timer::Notify` calls this timer handler, so the surrounding
-            //   `interrupt::free` block protects `m_pQueue` from being
-            //   simultanouesly accessed by `Timer::Notify`.
+            // - The current processor is the same as the one associated with
+            //   the `Timer` instance being operated on, so the surrounding
+            //   `interrupt::free` block will protect `m_pQueue` from
+            //   being simultanouesly accessed by `Timer::Notify`.
             // - `self.inner` is not registered.
             // - `inner.param` is initialized properly (the precondition of
             //   `Self::handler_trampoline`).
@@ -460,9 +460,9 @@ impl<T: TimerHandler> Timer<T> {
             // - The current processor is the same as the one that registered
             //   the timer, so this will operate on the correct `Timer`
             //   instance.
-            // - The current processor is the same as the one where
-            //   `Timer::Notify` calls this timer handler, so the surrounding
-            //   `interrupt::free` block protects `m_pQueue` from being
+            // - The current processor is the same as the one associated with
+            //   the `Timer` instance being operated on, so the surrounding
+            //   `interrupt::free` block will protect `m_pQueue` from being
             //   simultanouesly accessed by `Timer::Notify`.
             let result = unsafe { abi::SOLID_TIMER_UnRegisterTimer(self.inner.get()) };
 
