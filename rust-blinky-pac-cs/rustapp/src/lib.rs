@@ -1,4 +1,7 @@
-﻿#[no_mangle]
+﻿#![feature(type_alias_impl_trait)]
+use solid::{singleton::pin_singleton, thread::CpuCx, timer};
+
+#[no_mangle]
 pub extern "C" fn slo_main() {
     println!("Starting LED blinker");
 
@@ -9,20 +12,18 @@ pub extern "C" fn slo_main() {
     // we create `solid::timer::Timer`.
     let mut state = false;
 
-    // Construct a timer object on heap
-    //
-    // (There are ways to do this on a global variable, but we would need either
-    // unsafe code or incomplete unstable features to do this ergonomically for now.)
-    let mut timer = Box::pin(solid::timer::Timer::new(
-        solid::timer::Schedule::Interval(solid::timer::Usecs32(200_000)),
-        move |_: solid::thread::CpuCx<'_>| {
+    // Construct a timer object on a global variable
+    let mut timer = pin_singleton!(: Timer<_> = timer::Timer::new(
+        timer::Schedule::Interval(timer::Usecs32(200_000)),
+        move |_: CpuCx<'_>| {
             // Determine the next LED state
             state = !state;
 
             // Toggle the LED
             green_led::update(state);
         },
-    ));
+    ))
+    .unwrap();
 
     // Start the timer
     assert!(
@@ -31,9 +32,6 @@ pub extern "C" fn slo_main() {
     );
 
     assert!(timer.is_running());
-
-    // Keep the timer alive
-    std::mem::forget(timer);
 }
 
 mod green_led {

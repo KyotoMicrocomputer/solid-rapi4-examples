@@ -1,31 +1,22 @@
 ﻿//! CPU usage monitor
-use solid::{thread::CpuCx, timer};
-use std::{pin::Pin, sync::atomic};
-use takecell::TakeCell;
-
-/// The timer to measure CPU activity.
-static TIMER: TakeCell<timer::Timer<fn(CpuCx<'_>)>> = TakeCell::new(timer::Timer::new(
-    timer::Schedule::Interval(timer::Usecs32(1_000)),
-    timer_handler,
-));
+use solid::{singleton::pin_singleton, thread::CpuCx, timer};
+use std::sync::atomic;
 
 pub fn init() {
-    // Get a mutable reference to the `Timer` object. Each instance of `TakeCell` allows us to do
-    // this *only once*. In exchange, we can get `&'static mut Timer`.
-    if let Some(handler) = TIMER.take() {
-        // Convert `&'static mut Timer` to `Pin<&'static mut Timer>` (a pinned mutable reference).
-        //
-        // `&'static mut Timer` can be safely interpreted as a pinned reference `Pin<&'static mut
-        // Timer>`. You need a pinned reference to call `Timer::start` because you must keep the
-        // contained `SOLID_TIMER_HANDLER` alive while it's linked to the system timer list.
-        let handler = Pin::static_mut(handler);
+    // Construct a timer object in a global variable.
+    let Ok(handler) = pin_singleton!(: Timer<_> = timer::Timer::new(
+        timer::Schedule::Interval(timer::Usecs32(1_000)),
+        timer_handler,
+    )) else {
+        // The timer is already running; there's nothing to do here.
+        return;
+    };
 
-        // Start the timer.
-        assert!(
-            handler.start().expect("unable to start timer"),
-            "timer was already running"
-        );
-    }
+    // Start the timer.
+    assert!(
+        handler.start().expect("unable to start timer"),
+        "timer was already running"
+    );
 }
 
 /// Get the recent CPU usage, measured as a real value between zero and one.

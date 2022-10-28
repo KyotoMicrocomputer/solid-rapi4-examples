@@ -1,4 +1,7 @@
-﻿#[no_mangle]
+﻿#![feature(type_alias_impl_trait)]
+use solid::{interrupt, singleton::pin_singleton, thread::CpuCx};
+
+#[no_mangle]
 pub extern "C" fn slo_main() {
     println!("Starting LED blinker");
 
@@ -12,12 +15,9 @@ pub extern "C" fn slo_main() {
     // we create `solid::interrupt::Handler`.
     let mut state = false;
 
-    // Construct an interrupt handler object on heap
-    //
-    // (There are ways to do this on a global variable, but we would need either
-    // unsafe code or incomplete unstable features to do this ergonomically for now.)
-    let handler = Box::new(solid::interrupt::Handler::new(
-        move |_: solid::thread::CpuCx<'_>| {
+    // Construct an interrupt handler object on a global variable
+    let handler = pin_singleton!(: Handler<_> = interrupt::Handler::new(
+        move |_: CpuCx<'_>| {
             // Clear the AP804 instance's interrupt flag
             ap804::clear_int();
 
@@ -27,16 +27,14 @@ pub extern "C" fn slo_main() {
             // Toggle the LED
             green_led::update(state);
         },
-    ));
-
-    // Keep the interrupt handler alive indefinitely
-    let handler = std::pin::Pin::static_mut(Box::leak(handler));
+    ))
+    .unwrap();
 
     // Register the interrupt handler
     assert!(
         handler
             .register_static(
-                &solid::interrupt::HandlerOptions::new(ap804::INTNO, 10)
+                &interrupt::HandlerOptions::new(ap804::INTNO, 10)
                     .with_level_triggered()
                     .with_target_processor(1)
             )

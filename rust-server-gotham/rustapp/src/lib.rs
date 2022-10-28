@@ -1,4 +1,6 @@
-﻿#![deny(unsafe_op_in_unsafe_fn)]
+﻿#![feature(type_alias_impl_trait)]
+#![feature(let_else)]
+#![deny(unsafe_op_in_unsafe_fn)]
 
 #[cfg(target_os = "solid_asp3")]
 mod cpumon;
