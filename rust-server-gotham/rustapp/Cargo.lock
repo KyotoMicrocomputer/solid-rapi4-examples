@@ -1586,6 +1586,7 @@ dependencies = [
  "once_cell",
  "paste",
  "sync_wrapper",
+ "takecell",
 ]
 
 [[package]]
