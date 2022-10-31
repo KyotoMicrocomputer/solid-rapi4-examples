@@ -1,0 +1,63 @@
+name: Docs
+
+on:
+  push:
+    branches:
+    - 'main'
+    - 'work/ci-*'
+
+env:
+  preview: ${{ github.ref != 'refs/heads/main' || github.repository != 'KyotoMicrocomputer/solid-rapi4-examples' }}
+
+jobs:
+  build-docs:
+    name: Build and deploy docs
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+    
+      - name: Create rust-toolchain file
+        run: |
+          # SOLID-Rust 1.1.0
+          echo 'nightly-2022-08-12' > rust-toolchain
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+
+      - name: Build crate documentation
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          # TODO: Build docs for `solid`
+          args: --manifest-path common/Cargo.toml -p bcm2711_pac
+
+      - name: Collect output
+        run: |
+          mkdir output
+          mv common/target/doc output/rustdoc
+          touch output/.nojekyll
+
+      # If preview mode is inactive:
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        if: env.preview == 'false'
+        with:
+          branch: gh-pages
+          folder: output
+          single-commit: true
+      
+      # If preview mode is active:
+      - name: Archive output
+        if: env.preview == 'true'
+        run: tar -cJvf docs.tar.xz output
+
+      - name: Deploy as artifact
+        uses: actions/upload-artifact@v3
+        if: env.preview == 'true'
+        with:
+          name: docs
+          path: docs.tar.xz
+
