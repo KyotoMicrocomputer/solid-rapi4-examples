@@ -12,20 +12,24 @@ inline volatile uint32_t& reg32(std::uintptr_t va) {
 
 namespace green_led {
 
-constexpr std::uintptr_t GPIO_BASE = 0xFE200000UL;
 constexpr std::size_t GPIO_NUM = 42;
+
+constexpr std::uintptr_t GPIO_BASE = 0xFE200000UL;
+constexpr std::uintptr_t GPIO_GPFSEL0 = 0x000;
+constexpr std::uintptr_t GPIO_GPSET0 = 0x01c;
+constexpr std::uintptr_t GPIO_GPCLR0 = 0x028;
 
 void init()
 {
-    auto& reg = reg32(GPIO_BASE + ((GPIO_NUM / 10) << 2)); // GPFSEL4
+    auto& reg = reg32(GPIO_BASE + GPIO_GPFSEL0 + ((GPIO_NUM / 10) << 2));
     int mode = 1; // output
     reg = (reg & ~(7 << ((GPIO_NUM % 10) * 3))) | (mode << ((GPIO_NUM % 10) * 3));
 }
 
 void update(bool new_state)
 {
-    auto& reg = reg32(GPIO_BASE + ((GPIO_NUM / 32) << 2)
-        + (new_state ? 0x1c /* GPSET1 */ : 0x28 /* GPCLR1 */));
+    auto& reg = reg32(GPIO_BASE + (new_state ? GPIO_GPSET0 : GPIO_GPCLR0)
+        + ((GPIO_NUM / 32) << 2));
     reg = 1 << (GPIO_NUM % 32);
 }
 
