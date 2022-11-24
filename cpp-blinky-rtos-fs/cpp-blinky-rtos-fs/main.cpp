@@ -1,11 +1,10 @@
 ﻿#include <algorithm>
 #include <atomic>
 #include <array>
-#include <cstdint>
-#include <cstdlib>
 #include <solid_cs_assert.h>
 #include <solid_log.h>
 #include <solid_fs.h>
+#include <solid_timer.h>
 #include <kernel.h>
 
 namespace {
@@ -69,8 +68,38 @@ io_error:
 
 std::atomic<std::uint32_t> g_led_power;
 
-void led_power_update_task_entry(intptr_t)
+// Software delta-sigma DAC
+void led_dac_tick()
 {
+    static std::uint32_t integrator = 0;
+
+    const std::uint32_t new_value = integrator + g_led_power.load(std::memory_order_relaxed);
+    const bool output = new_value < integrator;
+    integrator = new_value;
+
+    green_led::update(output);
+}
+
+} // namespace
+
+extern "C" void slo_main()
+{
+    SOLID_LOG_printf("Starting LED blinker\n");
+
+    // Configure the LED port
+    green_led::init();
+
+    // Initialize the timer object
+    static SOLID_TIMER_HANDLER g_timer = {
+        .type = SOLID_TIMER_TYPE_INTERVAL,
+        .time = 100, // 100μs,
+        .func = [] (void *, SOLID_CPU_CONTEXT *) { led_dac_tick(); },
+    };
+
+    // Start the timer
+    int ret = SOLID_TIMER_RegisterTimer(&g_timer);
+    solid_cs_assert(ret == SOLID_ERR_OK);
+
     std::int32_t smoothed_power = 0;
     std::int32_t default_power = 0;
 
@@ -97,46 +126,5 @@ void led_power_update_task_entry(intptr_t)
 
             dly_tsk(10'000); // 10ms
         }
-    }
-}
-
-} // namespace
-
-extern "C" void slo_main()
-{
-    SOLID_LOG_printf("Starting LED blinker\n");
-
-    // Configure the LED port
-    green_led::init();
-
-    // Start a task
-    const T_CTSK led_power_update_task = {
-        .tskatr = TA_ACT,
-        .exinf = 0,
-        .task = led_power_update_task_entry,
-        .itskpri = 10,
-        .stksz = 4096,
-        .stk = NULL,
-        .iprcid = 1,
-        .affinity = uint_t(1) << 0,
-    };
-    int ret = acre_tsk(&led_power_update_task);
-    solid_cs_assert(ret > 0);
-
-    // Migrate to the second core, where there are fewer activities
-    ret = mig_tsk(TSK_SELF, 2);
-    solid_cs_assert(ret == E_OK);
-
-    // Software delta-sigma DAC
-    std::uint32_t integrator = 0;
-
-    while (true) {
-        const std::uint32_t new_value = integrator + g_led_power.load(std::memory_order_relaxed);
-        const bool output = new_value < integrator;
-        integrator = new_value;
-
-        green_led::update(output);
-
-        dly_tsk(100); // 100μs
     }
 }
