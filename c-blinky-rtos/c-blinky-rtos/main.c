@@ -9,7 +9,9 @@
 
 void green_led_init()
 {
-    volatile uint32_t *reg = (volatile uint32_t *)(GPIO_BASE + ((GPIO_NUM / 10) << 2)); // GPFSEL4
+    volatile uint32_t *reg = (volatile uint32_t *)(
+        GPIO_BASE + 0x00 /* GPFSEL0 */
+        + ((GPIO_NUM / 10) * 4));
     int mode = 1; // output
     *reg = (*reg & ~(7 << ((GPIO_NUM % 10) * 3))) | (mode << ((GPIO_NUM % 10) * 3));
 }
@@ -17,7 +19,8 @@ void green_led_init()
 void green_led_update(bool new_state)
 {
     volatile uint32_t *reg = (volatile uint32_t *)(
-        GPIO_BASE + ((GPIO_NUM / 32) << 2) + (new_state ? 0x1c /* GPSET1 */ : 0x28 /* GPCLR1 */));
+        GPIO_BASE + (new_state ? 0x1c /* GPSET0 */ : 0x28 /* GPCLR0 */)
+        + ((GPIO_NUM / 32) * 4));
     *reg = 1 << (GPIO_NUM % 32);
 }
 

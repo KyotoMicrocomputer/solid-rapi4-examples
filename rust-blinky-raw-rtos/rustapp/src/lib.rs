@@ -38,7 +38,7 @@ mod green_led {
 
     pub fn init() {
         unsafe {
-            let reg = (GPIO_BASE + (GPIO_NUM / 10) * 4) as *mut u32; // GPFSEL4
+            let reg = (GPIO_BASE + 0x00 /* GPFSEL0 */ + (GPIO_NUM / 10) * 4) as *mut u32;
             let mode = 1; // output
             reg.write_volatile(
                 reg.read_volatile() & !(7 << (GPIO_NUM % 10 * 3)) | (mode << (GPIO_NUM % 10 * 3)),
@@ -49,12 +49,12 @@ mod green_led {
     pub fn update(new_state: bool) {
         unsafe {
             let reg = (GPIO_BASE
-                + (GPIO_NUM / 32) * 4
                 + if new_state {
-                    0x1c /* GPSET1 */
+                    0x1c /* GPSET0 */
                 } else {
-                    0x28 /* GPCLR1 */
-                }) as *mut u32; // GPFSEL4
+                    0x28 /* GPCLR0 */
+                }
+                + (GPIO_NUM / 32) * 4) as *mut u32;
             reg.write_volatile(1 << (GPIO_NUM % 32));
         }
     }
