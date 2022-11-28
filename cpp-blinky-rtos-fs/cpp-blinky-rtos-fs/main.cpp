@@ -68,7 +68,7 @@ io_error:
 std::atomic<std::uint32_t> g_led_power;
 
 // Software delta-sigma DAC
-void led_dac_tick(intptr_t)
+void led_dac_tick(std::intptr_t)
 {
     static std::uint32_t integrator = 0;
 
