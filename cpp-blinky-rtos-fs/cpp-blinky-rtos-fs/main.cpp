@@ -121,9 +121,10 @@ extern "C" void slo_main()
             }
 
             // Apply gamma conversion and map to the range [0, 0xffff'ffff] (approx.)
-            const std::int32_t corrected_power = smoothed_power * smoothed_power * 429'496;
+            auto corrected_power = static_cast<std::uint32_t>(smoothed_power);
+            corrected_power *= corrected_power * 429'496u;
 
-            g_led_power.store(static_cast<std::uint32_t>(corrected_power), std::memory_order_relaxed);
+            g_led_power.store(corrected_power, std::memory_order_relaxed);
 
             dly_tsk(10'000); // 10ms
         }
