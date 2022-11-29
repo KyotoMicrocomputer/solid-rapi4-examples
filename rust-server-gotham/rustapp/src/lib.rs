@@ -24,10 +24,15 @@ extern "C" fn slo_main() {
     // Start CPU usage monitor
     #[cfg(target_os = "solid_asp3")]
     cpumon::init();
+    
+    #[cfg(target_os = "solid_asp3")]
+    let num_processors = solid::abi::SOLID_CORE_MAX;
+    #[cfg(not(target_os = "solid_asp3"))]
+    let num_processors = 4;
 
     // Start Rayon worker threads
     rayon::ThreadPoolBuilder::new()
-        .num_threads(solid::abi::SOLID_CORE_MAX)
+        .num_threads(num_processors)
         .start_handler(|i| {
             #[cfg(target_os = "solid_asp3")]
             {
@@ -46,7 +51,7 @@ extern "C" fn slo_main() {
 
     // Initialize Tokio
     let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(solid::abi::SOLID_CORE_MAX)
+        .worker_threads(num_processors)
         .thread_name("tokio worker")
         .on_thread_start(|| {
             #[cfg(target_os = "solid_asp3")]
