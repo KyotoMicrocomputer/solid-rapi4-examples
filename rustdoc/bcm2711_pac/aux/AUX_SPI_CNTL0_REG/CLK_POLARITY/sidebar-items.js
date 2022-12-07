@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["IdleHigh",""],["IdleLow",""],["SET",""]],"enum":[["Value","Invert SPI CLK"]]};

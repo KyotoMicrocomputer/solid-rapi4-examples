@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["ITIP0",""],["ITIP3",""]],"mod":[["ITIP0","Reads return the value of the `UARTRXD` primary input."],["ITIP3","Reads return the value of the `nUARTCTS` primary input."]],"struct":[["Register",""]]};

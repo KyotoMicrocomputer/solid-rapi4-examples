@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BASE","The base address of the GPIO register block."]],"mod":[["GPCLR","GPIO pin output clear"],["GPFSEL","GPIO function select"],["GPSET","GPIO pin output set"],["pin_generic",""]],"struct":[["Registers",""]]};

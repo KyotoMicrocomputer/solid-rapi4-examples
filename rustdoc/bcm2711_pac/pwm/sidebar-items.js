@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BASE_PWM0","The base address of the PWM0 instance of the PWM register block."],["BASE_PWM1","The base address of the PWM1 instance of the PWM register block."]],"mod":[["CTL",""],["DMAC",""],["STA",""]],"struct":[["Registers",""]]};

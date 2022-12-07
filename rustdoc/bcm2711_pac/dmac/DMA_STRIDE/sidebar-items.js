@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["D_STRIDE",""],["S_STRIDE",""]],"mod":[["D_STRIDE","Destination stride in bytes (signed)"],["S_STRIDE","Source stride in bytes (signed)"]],"struct":[["Register",""]]};

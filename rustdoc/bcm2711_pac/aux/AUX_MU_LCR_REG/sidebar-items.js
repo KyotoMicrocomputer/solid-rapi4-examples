@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BREAK",""],["DATA_SIZE",""],["DLAB",""]],"mod":[["BREAK","Break"],["DATA_SIZE","Data size"],["DLAB","DLAB access - if set the first two Mini UART registers give access to the Baudrate register."]],"struct":[["Register",""]]};

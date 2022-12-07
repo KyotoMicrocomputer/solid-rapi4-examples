@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CS_HIGH_TIME",""],["DONE_IRQ",""],["KEEP_INPUT",""],["SHIFT_IN_DIR",""],["TX_EMPTY_IRQ",""]],"mod":[["CS_HIGH_TIME","CS high time"],["DONE_IRQ","Done IRQ"],["KEEP_INPUT","Keep input"],["SHIFT_IN_DIR","SHift in MS bit first"],["TX_EMPTY_IRQ","TX empty IRQ"]],"struct":[["Register",""]]};

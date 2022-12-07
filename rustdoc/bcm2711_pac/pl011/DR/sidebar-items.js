@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BE",""],["DATA",""],["FE",""],["OE",""],["PE",""]],"mod":[["BE","Break error (read-only)."],["DATA","Receive/transmit data"],["FE","Framing error (read-only)."],["OE","Overrun error (read-only)."],["PE","Parity error (read-only)."]],"struct":[["Register",""]]};

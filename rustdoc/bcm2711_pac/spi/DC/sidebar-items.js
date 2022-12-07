@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["RDREQ",""],["RPANIC",""],["TDREQ",""],["TPANIC",""]],"mod":[["RDREQ","DMA read request threshold"],["RPANIC","DMA read panic threshold"],["TDREQ","DMA write request threshold"],["TPANIC","DMA write panic threshold"]],"struct":[["Register",""]]};
