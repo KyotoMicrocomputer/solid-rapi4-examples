@@ -9,6 +9,9 @@
 #[cfg(not(feature = "std"))]
 compile_error!("feature `std` is currently required due to `autocxx`'s requirements");
 
+#[doc(hidden)]
+pub extern crate core;
+
 pub mod abi;
 pub mod closure;
 pub mod error;
@@ -16,6 +19,7 @@ pub mod exceptions;
 pub mod fs;
 pub mod interrupt;
 pub mod loader;
+pub mod log;
 pub mod singleton;
 pub mod smp;
 #[doc(hidden)]
