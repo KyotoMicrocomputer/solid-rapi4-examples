@@ -6,6 +6,7 @@
 #include "solid_loader.h"
 #include "solid_intc.h"
 #include "solid_vector.h"
+#include "solid_log.h"
 
 #ifdef SOLID_TIMER_EACHCPU
 static constexpr bool _SOLID_RS_SOLID_TIMER_EACHCPU = true;

@@ -167,6 +167,17 @@ include_cpp! {
     generate!("SOLID_ADDRESS")
     generate!("SOLID_VFP_REGS_MAX")
 
+    generate!("SOLID_LOG_MODE_NONE")
+    generate!("SOLID_LOG_MODE_BOTH")
+    generate!("SOLID_LOG_MODE_VLINK")
+    generate!("SOLID_LOG_MODE_IMPL")
+    // TODO: `SOLID_LOG_MODE_MONITOR`
+    generate!("SOLID_LOG_SetMode")
+    generate!("SOLID_LOG_PutChar")
+    generate!("SOLID_LOG_puts")
+    generate!("SOLID_LOG_write")
+    generate!("SOLID_LOG_printf")
+
     // TODO: Make these `pub(crate)`
     generate!("_SOLID_RS_SOLID_TIMER_EACHCPU")
     generate!("_SOLID_RS_SOLID_TIMER_HANDLER_OFFSET0")
