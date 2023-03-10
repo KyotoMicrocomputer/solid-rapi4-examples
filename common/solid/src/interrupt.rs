@@ -316,7 +316,8 @@ impl<T: HandlerFn> Handler<T> {
     /// automatically configured:
     ///
     /// - Priority: Set to the value passed to [`Self::new`].
-    /// - Target processor set: The first processor.
+    /// - Target processor set: Set to the value specified by
+    ///   [`HandlerOptions::processor_set`]. (SPI only)
     ///
     /// # Safety
     ///
