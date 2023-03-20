@@ -8,7 +8,7 @@
 
 ```diff
   [dependencies]
-+ solid = { git = "https://github.com/KyotoMicrocomputer/solid-rapi4-examples.git" } 
++ solid = { git = "https://github.com/KyotoMicrocomputer/solid-rapi4-examples.git", features = ["std"] } 
 ```
 
 その後、`.ptrsproj` ファイルをテキストエディタで開き、`ProjectGuid` 要素の次に次の内容の `CargoEnvironmentVariables` 要素を追加してください (`( PROJECT )` はC++プロジェクト名で置き換えてください)。
