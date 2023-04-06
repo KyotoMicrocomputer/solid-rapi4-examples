@@ -515,11 +515,6 @@ impl Number {
     ///
     /// A handler must be registered by [`Handler::register`]`[_static]` for
     /// the interrupt line.
-    ///
-    /// # Memory Ordering
-    ///
-    /// If the method call enables the interrupt line, the call
-    /// synchronizes-with all resultant handler calls.
     pub fn disable(self) -> Result<(), EnableError> {
         // Disable interrupts to prevent processor migration and prevent
         // deadlock while doing `line.lock()`
