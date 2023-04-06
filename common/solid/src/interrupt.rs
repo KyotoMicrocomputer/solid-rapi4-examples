@@ -511,7 +511,7 @@ impl Number {
         })
     }
 
-    /// Enable the interrupt line.
+    /// Disable the interrupt line.
     ///
     /// A handler must be registered by [`Handler::register`]`[_static]` for
     /// the interrupt line.
