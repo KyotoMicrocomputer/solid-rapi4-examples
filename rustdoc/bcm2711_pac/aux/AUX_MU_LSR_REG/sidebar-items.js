@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["DATA_READY",""],["RX_OVERRUN",""],["TX_EMPTY",""],["TX_IDLE",""]],"mod":[["DATA_READY","Data ready"],["RX_OVERRUN","Receiver overrun (RO)"],["TX_EMPTY","Transmitter empty"],["TX_IDLE","Transmitter idle"]],"struct":[["Register",""]]};

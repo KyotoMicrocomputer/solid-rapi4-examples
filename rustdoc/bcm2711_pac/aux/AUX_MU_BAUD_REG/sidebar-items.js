@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BAUDRATE",""]],"mod":[["BAUDRATE","Baudrate"]],"struct":[["Register",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["MINI_UART_ENABLE",""],["SPI1_ENABLE",""],["SPI2_ENABLE",""]],"mod":[["MINI_UART_ENABLE","If set the mini UART is enabled."],["SPI1_ENABLE","If set the SPI1 module is enabled."],["SPI2_ENABLE","If set the SPI2 module is enabled."]],"struct":[["Register",""]]};

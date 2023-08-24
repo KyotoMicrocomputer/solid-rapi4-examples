@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""],["Sixteen",""],["ThirtyTwo",""]],"enum":[["Value","PDM decimation factor"]]};

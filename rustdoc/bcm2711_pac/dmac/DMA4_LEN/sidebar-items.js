@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["LENGTH",""],["XLENGTH",""],["YLENGTH",""]],"mod":[["LENGTH","(Linear mode) Transfer length in bytes"],["XLENGTH","(2D mode) X transfer length in bytes"],["YLENGTH","(2D mode) Y transfer length minus one, indicating how many `XLENGTH` transfers are performed"]],"struct":[["Register",""]]};

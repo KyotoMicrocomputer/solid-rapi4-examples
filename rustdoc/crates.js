@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["bcm2711_pac","darling","darling_core","darling_macro","fnv","ident_case","macropol","proc_macro2","quote","strsim","syn","tock_registers","unicode_ident"];

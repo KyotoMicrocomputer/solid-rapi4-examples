@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["MINI_UART_IRQ",""],["SPI1_IRQ",""],["SPI2_IRQ",""]],"mod":[["MINI_UART_IRQ","If set the mini UART has an interrupt pending."],["SPI1_IRQ","If set the SPI1 module has an interrupt pending."],["SPI2_IRQ","If set the SPI2 module has an interrupt pending."]],"struct":[["Register",""]]};

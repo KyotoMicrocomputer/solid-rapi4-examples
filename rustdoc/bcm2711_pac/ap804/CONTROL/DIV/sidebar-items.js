@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["DivideBy1",""],["DivideBy16",""],["DivideBy256",""],["SET",""]],"enum":[["Value","Pre-scale bits"]]};

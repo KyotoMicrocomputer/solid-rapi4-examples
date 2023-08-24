@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["FEDL",""],["REDL",""]],"mod":[["FEDL","Falling edge delay"],["REDL","Rising edge delay"]],"struct":[["Register",""]]};

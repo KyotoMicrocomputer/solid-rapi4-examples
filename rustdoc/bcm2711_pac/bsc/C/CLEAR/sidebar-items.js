@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Clear",""],["NoAction",""],["SET",""]],"enum":[["Value","FIFO clear (W1SC)"]]};

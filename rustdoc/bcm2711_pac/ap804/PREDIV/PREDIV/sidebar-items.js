@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Pre-divider value. `timer_clock = apb_clock / (pre_divider + 1)`"]]};
