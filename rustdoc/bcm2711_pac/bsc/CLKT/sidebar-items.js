@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["TOUT",""]],"mod":[["TOUT","Clock stretch timeout value"]],"struct":[["Register",""]]};

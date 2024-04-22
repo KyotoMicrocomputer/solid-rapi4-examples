@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["I2CEN",""],["INTD",""],["INTR",""],["INTT",""],["READ",""],["ST",""]],"mod":[["CLEAR","FIFO clear (W1SC)"],["I2CEN","I2C enable"],["INTD","Interrupt on DONE"],["INTR","Interrupt on RX"],["INTT","Interrupt on TX"],["READ","Read transfer"],["ST","Start transfer (W1SC)"]],"struct":[["Register",""]]};

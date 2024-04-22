@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","(2D mode) Y transfer length minus one, indicating how many `XLENGTH` transfers are performed"]]};

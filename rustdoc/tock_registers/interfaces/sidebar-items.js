@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["ReadWriteable","[`Readable`] and [`Writeable`] register, over the same [`RegisterLongName`]"],["Readable","Readable register"],["Writeable","Writeable register"]]};

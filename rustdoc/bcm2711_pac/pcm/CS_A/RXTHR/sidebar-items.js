@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Full",""],["OneQuarterFull",""],["OneSample",""],["SET",""],["ThreeQuartersFull",""]],"enum":[["Value","Set the RX FIFO threshold at which point the `RXR` flag is set"]]};

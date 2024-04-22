@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["FallingEdge",""],["RisingEdge",""],["SET",""]],"enum":[["Value","In rising"]]};

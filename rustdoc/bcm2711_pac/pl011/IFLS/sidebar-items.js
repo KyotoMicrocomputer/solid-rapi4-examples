@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["RXIFLSEL",""],["RXIFPSEL",""],["TXIFLSEL",""],["TXIFPSEL",""]],"mod":[["RXIFLSEL","Receive interrupt FIFO level select"],["RXIFPSEL","Unsupported, write zero, read as don’t care"],["TXIFLSEL","Transmit interrupt FIFO level select"],["TXIFPSEL","Unsupported, write zero, read as don’t care"]],"struct":[["Register",""]]};

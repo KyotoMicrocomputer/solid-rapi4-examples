@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["FirstSclkTransitionAtBeginningOFDataBit",""],["FirstSclkTransitionAtMiddleOfDataBit",""],["SET",""]],"enum":[["Value","Clock phase"]]};

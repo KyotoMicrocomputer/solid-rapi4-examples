@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BAUDRATE_HI",""],["RX_INT_ENABLE",""],["TX_INT_ENABLE",""]],"mod":[["BAUDRATE_HI","MS 8 bits baudrate, `DLAB` = 1"],["RX_INT_ENABLE","Enable receive interrupt, `DLAB` = 0"],["TX_INT_ENABLE","Enable transmit interrupt, `DLAB` = 0"]],"struct":[["Register",""]]};

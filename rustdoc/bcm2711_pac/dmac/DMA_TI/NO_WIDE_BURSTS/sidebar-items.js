@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Don’t do wide writes as a two-beat burst"]]};

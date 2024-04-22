@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["RestStateIsHigh",""],["RestStateIsLow",""],["SET",""]],"enum":[["Value","Clock polarity"]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["OneHundredAndTwentyEightBits",""],["SET",""],["ThirtyTwoBits",""]],"enum":[["Value","Destination transfer width"]]};

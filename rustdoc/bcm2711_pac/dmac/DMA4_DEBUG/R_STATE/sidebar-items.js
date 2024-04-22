@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Calc",""],["Idle",""],["Read4k",""],["ReadFifoFull",""],["Reading",""],["SET",""],["WaitCbData",""],["WaitWriteComplete",""]],"enum":[["Value","Read state machine state (RO)"]]};

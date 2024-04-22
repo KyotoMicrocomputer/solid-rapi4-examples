@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Indicates that the RX FIFO contains data"]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["INT_PENDING",""],["RX_INT_PENDING_FIFO_CLEAR",""],["TX_INT_PENDING_FIFO_CLEAR",""]],"mod":[["INT_PENDING","Interrupt pending"],["RX_INT_PENDING_FIFO_CLEAR","RX interrupt ID bit (write), FIFO clear (read)"],["TX_INT_PENDING_FIFO_CLEAR","TX interrupt ID bit (read), FIFO clear (write)"]],"struct":[["Register",""]]};

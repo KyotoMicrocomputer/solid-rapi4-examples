@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Packed16x2",""],["SET",""],["Unpacked",""]],"enum":[["Value","Transmit frame packed mode"]]};

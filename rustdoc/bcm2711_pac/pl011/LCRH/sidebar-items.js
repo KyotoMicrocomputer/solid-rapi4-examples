@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BRK",""],["EPS",""],["FEN",""],["PEN",""],["SPS",""],["STP2",""],["WLEN",""]],"mod":[["BRK","Send break"],["EPS","Even parity select"],["FEN","Enable FIFOs"],["PEN","Parity enable"],["SPS","Stick parity select"],["STP2","Two stop bits select"],["WLEN","Word length"]],"struct":[["Register",""]]};

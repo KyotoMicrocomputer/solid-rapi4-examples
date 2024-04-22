@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BASE_ARM_PA","The low-peripheral ARM physical address of the ARM Mailboxes register block."]],"struct":[["Registers",""]]};

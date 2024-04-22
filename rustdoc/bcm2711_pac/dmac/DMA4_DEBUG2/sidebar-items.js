@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["OUTSTANDING_READS",""],["OUTSTANDING_WRITES",""]],"mod":[["OUTSTANDING_READS","Outstanding read words count"],["OUTSTANDING_WRITES","Outstanding write response count"]],"struct":[["Register",""]]};

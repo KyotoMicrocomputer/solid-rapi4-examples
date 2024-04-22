@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["DLEN",""]],"mod":[["DLEN","Data length in bytes"]],"struct":[["Register",""]]};

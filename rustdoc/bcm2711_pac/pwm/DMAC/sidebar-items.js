@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["DREQ",""],["ENAB",""],["PANIC",""]],"mod":[["DREQ","DMA threshold for DREQ signal"],["ENAB","DMA enable"],["PANIC","DMA threshold for PANIC signal"]],"struct":[["Register",""]]};

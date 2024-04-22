@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["ActiveHigh",""],["ActiveLow",""],["CLEAR",""],["SET",""]],"enum":[["Value","Channel 2 polarity"]]};

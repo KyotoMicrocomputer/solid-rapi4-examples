@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Normal",""],["RouteToBaudrateReg",""],["SET",""]],"enum":[["Value","DLAB access - if set the first two Mini UART registers give access to the Baudrate register."]]};

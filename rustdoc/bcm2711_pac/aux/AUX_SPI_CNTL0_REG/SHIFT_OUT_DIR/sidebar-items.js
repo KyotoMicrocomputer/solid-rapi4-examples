@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["LsbFirst",""],["MsbFirst",""],["SET",""]],"enum":[["Value","SHift out MS bit first"]]};

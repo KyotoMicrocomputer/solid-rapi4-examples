@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Set the 1G SDRAM ram page that the 32-bit DMA engines (DMA0-6) will access when addressing the 1G uncached range `0xc000_0000..=0xffff_ffff`"]]};

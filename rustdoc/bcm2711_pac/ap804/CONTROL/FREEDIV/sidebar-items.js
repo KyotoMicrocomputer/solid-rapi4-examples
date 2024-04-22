@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Free running counter pre-scaler. Freq is `sys_clk / (prescale + 1)`"]]};

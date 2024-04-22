@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["PINS_PER_REGISTER","The number of pins represented by each `pin_generic` register."]],"fn":[["pin","Construct a [`Field`] corresponding to the specified pin number."]],"struct":[["Register",""]]};

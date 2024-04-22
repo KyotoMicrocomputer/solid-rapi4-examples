@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Linear",""],["SET",""],["TwoD",""]],"enum":[["Value","2D mode"]]};

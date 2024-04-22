@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["Even",""],["Odd",""],["SET",""]],"enum":[["Value","Even parity select"]]};

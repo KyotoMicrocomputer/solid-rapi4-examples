@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Speed: `spi_clk_freq = system_clock_freq / 2 * (speed + 1)`"]]};

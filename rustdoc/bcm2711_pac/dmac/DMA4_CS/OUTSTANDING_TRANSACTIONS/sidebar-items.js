@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","Indicates that there are outstanding AXI transfers, either outstanding read data or outstanding write responses (RO)"]]};

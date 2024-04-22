@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["NoAction",""],["SET",""],["StartNewTransfer",""]],"enum":[["Value","Start transfer (W1SC)"]]};

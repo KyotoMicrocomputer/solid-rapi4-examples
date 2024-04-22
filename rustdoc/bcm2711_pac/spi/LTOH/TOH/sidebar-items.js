@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["CLEAR",""],["SET",""]],"enum":[["Value","This sets the Output Hold delay in APB clocks. A value of `0` causes a one-clock delay."]]};
