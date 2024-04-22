@@ -16,3 +16,4 @@ PreObjectOut
 *.ptsuo
 *.db.v2
 *.lockdb
+.vs/
